@@ -1,0 +1,87 @@
+<div class="contacts" [formGroup]="searchForm">
+  <div class="contacts__head">
+    <div>
+      <h2 class="contacts__title">Contacts</h2>
+      <p class="contacts__sub">Search, import CSV, and manage subscribers.</p>
+    </div>
+    <div class="contacts__tools">
+      <label class="file-btn">
+        Import CSV
+        <input type="file" accept=".csv,text/csv" (change)="onFile($event)" hidden />
+      </label>
+    </div>
+  </div>
+
+  <div class="contacts__search">
+    <input type="search" placeholder="Search name or phone…" formControlName="q" />
+  </div>
+
+  @if (loading()) {
+    <app-skeleton-table
+      [count]="8"
+      [cols]="['20%', '18%', '22%', '18%', '14%', '10%']"
+    />
+  } @else {
+    @if (page(); as pg) {
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Tags</th>
+              <th>Last message</th>
+              <th>Added</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of pg.data; track c.id) {
+              <tr>
+                <td class="td-strong">{{ c.name }}</td>
+                <td>{{ c.phone }}</td>
+                <td class="td-tags">
+                  @for (t of c.tags; track t) {
+                    <span class="tag">{{ t }}</span>
+                  } @empty {
+                    <span class="td-muted">—</span>
+                  }
+                </td>
+                <td class="td-muted">
+                  {{ c.lastMessageAt ? (c.lastMessageAt | timeago) : '—' }}
+                </td>
+                <td class="td-muted">{{ c.createdAt | timeago }}</td>
+                <td class="td-actions">
+                  <button type="button" class="link" (click)="remove(c)">Remove</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="td-empty">No contacts match.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pager">
+        <span class="pager__info">
+          {{ sliceStart(pg) }}–{{ sliceEnd(pg) }} of {{ pg.total | number }}
+        </span>
+        <div class="pager__btns">
+          <button type="button" class="btn-ghost" [disabled]="pg.page <= 1" (click)="prev()">
+            Prev
+          </button>
+          <button
+            type="button"
+            class="btn-ghost"
+            [disabled]="pg.page >= maxPage(pg)"
+            (click)="next()"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    }
+  }
+</div>

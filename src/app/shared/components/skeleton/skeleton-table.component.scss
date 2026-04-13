@@ -1,0 +1,37 @@
+.sk-table {
+  width: 100%;
+}
+
+.sk-thead,
+.sk-tr {
+  display: flex;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f2;
+  align-items: center;
+}
+
+.sk-th {
+  height: 11px;
+  border-radius: 4px;
+}
+
+.sk-td {
+  height: 14px;
+  border-radius: 6px;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f2 25%, #e4e4e8 50%, #f0f0f2 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
+}

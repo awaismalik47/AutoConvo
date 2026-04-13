@@ -1,0 +1,198 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/page' as page;
+
+.home {
+  max-width: 1100px;
+}
+
+.home__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 960px) {
+  .home__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.stat {
+  @include page.card;
+  padding: 1.1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.stat__label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: $text-muted;
+}
+
+.stat__value {
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: $text-primary;
+}
+
+.stat__delta {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: $text-muted;
+}
+
+.stat__delta.is-up {
+  color: $green-dark;
+}
+
+.stat__delta.is-down {
+  color: $red;
+}
+
+.home__chart-skel {
+  @include page.card;
+  padding: 1.25rem;
+}
+
+.home__bars-skel {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  height: 200px;
+  margin-top: 1.25rem;
+  padding-top: 0.5rem;
+}
+
+.home__bar-skel {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.home__bar-skel-inner {
+  width: 100%;
+  height: 40%;
+  border-radius: $r-sm;
+  min-height: 2.5rem;
+}
+
+.chart {
+  @include page.card;
+  padding: 1.25rem 1.25rem 1.5rem;
+}
+
+.chart__head {
+  margin-bottom: 1rem;
+}
+
+.chart__title {
+  margin: 0 0 0.2rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: $text-primary;
+}
+
+.chart__sub {
+  margin: 0;
+  font-size: 0.75rem;
+  color: $text-muted;
+}
+
+.chart__legend {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.75rem;
+  color: $text-secondary;
+  margin-bottom: 1rem;
+}
+
+.chart__legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.dot--sent {
+  background: #cbd5e1;
+}
+
+.dot--del {
+  background: $text-primary;
+}
+
+.chart__empty {
+  font-size: 0.8125rem;
+  color: $text-muted;
+  margin: 0;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.chart__bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.65rem;
+  min-height: 220px;
+  padding-top: 0.5rem;
+  border-top: 1px solid $border;
+}
+
+.chart__col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart__pair {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  min-height: 180px;
+}
+
+.chart__bar {
+  width: 42%;
+  max-width: 28px;
+  border-radius: 6px 6px 2px 2px;
+  min-height: 4px;
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chart__bar--sent {
+  background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
+}
+
+.chart__bar--del {
+  background: linear-gradient(180deg, #334155 0%, $text-primary 100%);
+}
+
+.chart__label {
+  font-size: 0.6875rem;
+  color: $text-muted;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}

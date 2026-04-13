@@ -1,0 +1,25 @@
+<div class="set">
+  <div class="set__head">
+    <h2 class="set__title">Settings</h2>
+    <p class="set__sub">Profile and subscription.</p>
+  </div>
+
+  @if (auth.currentUser(); as u) {
+    <div class="card">
+      <div class="row">
+        <span class="label">Name</span>
+        <span class="val">{{ u.name }}</span>
+      </div>
+      <div class="row">
+        <span class="label">Email</span>
+        <span class="val">{{ u.email }}</span>
+      </div>
+      <div class="row">
+        <span class="label">Plan</span>
+        <span class="plan">{{ u.plan | titlecase }}</span>
+      </div>
+    </div>
+  } @else {
+    <p class="muted">No profile loaded.</p>
+  }
+</div>

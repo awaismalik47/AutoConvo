@@ -1,0 +1,69 @@
+// Shared patterns for feature pages (import where needed via @use '../styles/page' or path relative)
+@use 'variables' as *;
+
+@mixin card {
+  background: $bg-card;
+  border: 1px solid $border;
+  border-radius: $r-lg;
+  box-shadow: $shadow-sm;
+}
+
+@mixin page-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: $text-primary;
+  margin: 0 0 1.25rem;
+}
+
+@mixin btn-base {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: $r-md;
+  border: none;
+  cursor: pointer;
+  transition: background $t-fast, opacity $t-fast;
+}
+
+@mixin btn-primary {
+  @include btn-base;
+  background: $green;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  &:hover:not(:disabled) {
+    background: $green-dark;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@mixin btn-ghost {
+  @include btn-base;
+  background: transparent;
+  color: $text-secondary;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid $border;
+  &:hover {
+    background: $bg;
+    color: $text-primary;
+  }
+}
+
+@mixin input {
+  font-family: inherit;
+  font-size: 13px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid $border;
+  border-radius: $r-md;
+  background: $white;
+  color: $text-primary;
+  width: 100%;
+  outline: none;
+  transition: border-color $t-fast;
+  &:focus {
+    border-color: #c5c9d0;
+  }
+}

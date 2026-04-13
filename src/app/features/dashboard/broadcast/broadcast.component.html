@@ -1,0 +1,91 @@
+<div class="bc">
+  <div class="bc__head">
+    <div>
+      <h2 class="bc__title">Broadcasts</h2>
+      <p class="bc__sub">Schedule and track WhatsApp campaigns.</p>
+    </div>
+    <button type="button" class="bc__primary" (click)="openModal()">New campaign</button>
+  </div>
+
+  @if (loading()) {
+    <app-skeleton-table
+      [count]="5"
+      [cols]="['18%', '18%', '12%', '12%', '12%', '18%']"
+    />
+  } @else {
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Template</th>
+            <th>Recipients</th>
+            <th>Delivered</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of rows(); track r.id) {
+            <tr>
+              <td class="td-strong">{{ r.name }}</td>
+              <td>{{ r.templateName }}</td>
+              <td>{{ r.recipientCount | number }}</td>
+              <td>{{ r.delivered | number }}</td>
+              <td>
+                <span class="pill" [class]="statusClass(r.status)">{{ r.status }}</span>
+              </td>
+              <td class="td-actions">
+                @if (r.status === 'scheduled' || r.status === 'running') {
+                  <button type="button" class="link" (click)="cancel(r.id)">Cancel</button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="td-empty">No campaigns yet.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (modalOpen()) {
+  <div class="modal-backdrop" (click)="closeModal()"></div>
+  <div
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="bc-modal-title"
+    (click)="$event.stopPropagation()"
+  >
+    <h2 id="bc-modal-title" class="modal__title">New campaign</h2>
+    <form class="modal__form" [formGroup]="form" (ngSubmit)="create()">
+      <label class="field">
+        <span>Name</span>
+        <input type="text" formControlName="name" placeholder="Spring promo" />
+      </label>
+      <label class="field">
+        <span>Template</span>
+        <select formControlName="templateId">
+          <option value="" disabled>Choose template</option>
+          @for (t of templates(); track t.id) {
+            <option [value]="t.id">{{ t.name }} ({{ t.language }})</option>
+          }
+        </select>
+      </label>
+      <label class="field">
+        <span>Schedule (optional)</span>
+        <input type="datetime-local" formControlName="scheduledAt" />
+      </label>
+      <div class="modal__actions">
+        <button type="button" class="btn-ghost" (click)="closeModal()">Close</button>
+        <button type="submit" class="btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Saving…' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

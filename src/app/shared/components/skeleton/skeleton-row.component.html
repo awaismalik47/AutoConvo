@@ -1,0 +1,15 @@
+@for (_ of rowPlaceholders; track $index) {
+  <div class="sk-row">
+    <div class="skeleton sk-avatar"></div>
+    <div class="sk-body">
+      <app-skeleton
+        [rows]="[
+          { h: 13, w: '55%', r: 6 },
+          { h: 12, w: '75%', r: 6 },
+        ]"
+        [gap]="6"
+      />
+    </div>
+    <div class="skeleton sk-end"></div>
+  </div>
+}

@@ -1,0 +1,86 @@
+<div class="home">
+  @if (loading()) {
+    <div class="home__stats">
+      @for (x of [1, 2, 3, 4]; track x) {
+        <app-skeleton-card />
+      }
+    </div>
+    <div class="home__chart-skel">
+      <app-skeleton [rows]="[{ h: 14, w: '30%', r: 6 }]" [gap]="8" />
+      <div class="home__bars-skel">
+        @for (b of [1, 2, 3, 4, 5, 6, 7]; track b) {
+          <div class="home__bar-skel">
+            <div class="home__bar-skel-inner skeleton-shimmer"></div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    @if (stats(); as s) {
+      <div class="home__stats">
+        <article class="stat">
+          <span class="stat__label">Messages sent</span>
+          <span class="stat__value">{{ s.totalSent | number }}</span>
+          <span class="stat__delta" [class]="deltaClass(s.sentDelta)">
+            {{ s.sentDelta > 0 ? '+' : '' }}{{ s.sentDelta }}%
+          </span>
+        </article>
+        <article class="stat">
+          <span class="stat__label">Delivery rate</span>
+          <span class="stat__value">{{ s.deliveryRate | number: '1.0-1' }}%</span>
+          <span class="stat__delta" [class]="deltaClass(s.deliveryDelta)">
+            {{ s.deliveryDelta > 0 ? '+' : '' }}{{ s.deliveryDelta }}%
+          </span>
+        </article>
+        <article class="stat">
+          <span class="stat__label">Conversations</span>
+          <span class="stat__value">{{ s.totalConversations | number }}</span>
+          <span class="stat__delta" [class]="deltaClass(s.conversationsDelta)">
+            {{ s.conversationsDelta > 0 ? '+' : '' }}{{ s.conversationsDelta }}%
+          </span>
+        </article>
+        <article class="stat">
+          <span class="stat__label">Contacts</span>
+          <span class="stat__value">{{ s.totalContacts | number }}</span>
+          <span class="stat__delta" [class]="deltaClass(s.contactsDelta)">
+            {{ s.contactsDelta > 0 ? '+' : '' }}{{ s.contactsDelta }}%
+          </span>
+        </article>
+      </div>
+    }
+
+    <section class="chart">
+      <div class="chart__head">
+        <h2 class="chart__title">Delivery performance</h2>
+        <p class="chart__sub">Sent vs delivered by day</p>
+      </div>
+      @if (chartPoints().length === 0) {
+        <p class="chart__empty">No chart data yet.</p>
+      } @else {
+        <div class="chart__legend">
+          <span><i class="dot dot--sent"></i> Sent</span>
+          <span><i class="dot dot--del"></i> Delivered</span>
+        </div>
+        <div class="chart__bars">
+          @for (p of chartPoints(); track p.label) {
+            <div class="chart__col">
+              <div class="chart__pair">
+                <div
+                  class="chart__bar chart__bar--sent"
+                  [style.height.%]="barPct(p.sent)"
+                  [title]="'Sent: ' + p.sent"
+                ></div>
+                <div
+                  class="chart__bar chart__bar--del"
+                  [style.height.%]="barPct(p.delivered)"
+                  [title]="'Delivered: ' + p.delivered"
+                ></div>
+              </div>
+              <span class="chart__label">{{ p.label }}</span>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
+</div>

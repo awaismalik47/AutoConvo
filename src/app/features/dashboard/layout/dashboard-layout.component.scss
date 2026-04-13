@@ -1,0 +1,201 @@
+@use '../../../../styles/variables' as *;
+
+.shell {
+  min-height: 100vh;
+  display: flex;
+  background: $color-bg-page;
+}
+
+.sidebar {
+  width: $sidebar-width;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: $color-sidebar;
+  color: #e5e7eb;
+  padding: 1.25rem 0.75rem;
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.75rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 0.75rem;
+}
+
+.sidebar__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: $r-sm;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.55rem;
+  color: #fff;
+}
+
+.sidebar__name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: $r-md;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #9ca3af;
+  text-decoration: none;
+  transition:
+    background $t-fast,
+    color $t-fast;
+}
+
+.sidebar__link:hover {
+  color: #f3f4f6;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar__link.is-active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar__ico {
+  font-size: 0.75rem;
+  opacity: 0.85;
+  width: 1.1rem;
+  text-align: center;
+}
+
+.sidebar__logout {
+  margin-top: auto;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: $r-md;
+  background: transparent;
+  color: #9ca3af;
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition:
+    color $t-fast,
+    border-color $t-fast;
+}
+
+.sidebar__logout:hover {
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.35);
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  height: $topbar-height;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.75rem;
+  background: $color-bg-elevated;
+  border-bottom: 1px solid $border;
+}
+
+.topbar__title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: $text-primary;
+}
+
+.topbar__user {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.topbar__avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: $text-primary;
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topbar__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.topbar__name {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: $text-primary;
+}
+
+.topbar__plan {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: $text-muted;
+  text-transform: capitalize;
+}
+
+.content {
+  flex: 1;
+  padding: 1.5rem 1.75rem 2rem;
+  overflow: auto;
+}
+
+@media (max-width: 720px) {
+  .sidebar {
+    width: 4rem;
+    padding: 1rem 0.35rem;
+  }
+
+  .sidebar__name,
+  .sidebar__link {
+    font-size: 0;
+  }
+
+  .sidebar__ico {
+    font-size: 0.85rem;
+  }
+
+  .sidebar__brand {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .sidebar__logout {
+    font-size: 0;
+  }
+}

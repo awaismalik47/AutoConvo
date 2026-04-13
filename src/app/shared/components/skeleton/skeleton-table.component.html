@@ -1,0 +1,14 @@
+<div class="sk-table">
+  <div class="sk-thead">
+    @for (col of cols; track $index) {
+      <div class="skeleton sk-th" [style.width]="col"></div>
+    }
+  </div>
+  @for (r of rowPlaceholders; track $index) {
+    <div class="sk-tr">
+      @for (col of cols; track $index) {
+        <div class="skeleton sk-td" [style.width]="col"></div>
+      }
+    </div>
+  }
+</div>

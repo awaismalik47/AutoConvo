@@ -1,0 +1,64 @@
+<div class="inbox">
+  <aside class="inbox__list" aria-label="Conversations">
+    @if (loadingList()) {
+      <app-skeleton-row [count]="6" />
+    } @else if (conversations().length === 0) {
+      <p class="inbox__empty">No conversations yet.</p>
+    } @else {
+      @for (c of conversations(); track convKey(c)) {
+        <button
+          type="button"
+          class="conv"
+          [class.conv--active]="selectedPhone() === (c.phone ?? c.contactPhone)"
+          (click)="selectPhone(c.phone ?? c.contactPhone ?? '')"
+        >
+          <div class="conv__top">
+            <span class="conv__name">{{ c.contactName || c.contactPhone }}</span>
+            @if (c.unread && c.unread > 0) {
+              <span class="conv__badge">{{ c.unread }}</span>
+            }
+          </div>
+          <span class="conv__preview">{{ c.lastMessage | truncate: 52 }}</span>
+          <span class="conv__time">{{ c.lastMessageAt | timeago }}</span>
+        </button>
+      }
+    }
+  </aside>
+
+  <section class="inbox__thread" aria-label="Messages">
+    @if (!selectedPhone()) {
+      <div class="inbox__placeholder">Select a conversation</div>
+    } @else if (loadingMessages()) {
+      <div class="inbox__msgs-skel">
+        @for (x of [1, 2, 3, 4]; track x) {
+          <div class="msg-skel skeleton-shimmer"></div>
+        }
+      </div>
+    } @else {
+      <div class="inbox__msgs">
+        @for (m of messages(); track m.id) {
+          <div class="msg" [class.msg--out]="m.direction === 'outbound'">
+            <p class="msg__body">{{ m.body }}</p>
+            <span class="msg__meta">
+              {{ m.createdAt | timeago }}
+              @if (m.status) {
+                <span> · {{ m.status }}</span>
+              }
+            </span>
+          </div>
+        }
+      </div>
+      <div class="inbox__composer">
+        <textarea
+          rows="2"
+          placeholder="Type a message…"
+          [ngModel]="draft()"
+          (ngModelChange)="draft.set($event)"
+          (keydown.control.enter)="send()"
+          (keydown.meta.enter)="send()"
+        ></textarea>
+        <button type="button" class="btn-send" (click)="send()">Send</button>
+      </div>
+    }
+  </section>
+</div>

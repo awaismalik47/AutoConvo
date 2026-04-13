@@ -1,0 +1,185 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/page' as page;
+@use '../broadcast/broadcast.component.scss' as bc;
+
+.tpl__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.tpl__title {
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: $text-primary;
+}
+
+.tpl__sub {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: $text-muted;
+}
+
+.tpl__primary {
+  @include page.btn-primary;
+}
+
+.table-wrap {
+  @include page.card;
+  overflow: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.table th,
+.table td {
+  padding: 0.65rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid $border;
+}
+
+.table th {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $text-muted;
+  background: #fafbfc;
+}
+
+.td-strong {
+  font-weight: 500;
+  color: $text-primary;
+}
+
+.td-muted {
+  color: $text-muted;
+  font-size: 0.75rem;
+}
+
+.td-empty {
+  text-align: center;
+  color: $text-muted;
+  padding: 2rem 1rem !important;
+}
+
+.td-actions {
+  text-align: right;
+}
+
+.link {
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 0.75rem;
+  color: $red;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.pill {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+
+.pill--ok {
+  background: $green-bg;
+  color: $green-dark;
+}
+
+.pill--pending {
+  background: $amber-bg;
+  color: #b45309;
+}
+
+.pill--bad {
+  background: $red-bg;
+  color: #b91c1c;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 17, 23, 0.35);
+  z-index: 8000;
+}
+
+.modal {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 8001;
+  width: min(460px, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  background: $white;
+  border-radius: $r-xl;
+  border: 1px solid $border;
+  box-shadow: $shadow-md;
+  padding: 1.25rem 1.35rem;
+}
+
+.modal__title {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.modal__hint {
+  margin: 0 0 1rem;
+  font-size: 0.75rem;
+  color: $text-muted;
+}
+
+.modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: $text-secondary;
+}
+
+.field input,
+.field select,
+.field textarea {
+  @include page.input;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 5rem;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.btn-ghost {
+  @include page.btn-ghost;
+}
+
+.btn-primary {
+  @include page.btn-primary;
+}

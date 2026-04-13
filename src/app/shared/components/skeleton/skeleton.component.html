@@ -1,0 +1,10 @@
+<div class="sk-wrap" [style.gap.px]="gap">
+  @for (row of rows; track $index) {
+    <div
+      class="skeleton"
+      [style.height.px]="row.h"
+      [style.width]="row.w"
+      [style.border-radius.px]="row.r ?? 8"
+    ></div>
+  }
+</div>

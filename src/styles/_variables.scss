@@ -1,0 +1,53 @@
+// ── Color Tokens ───────────────────────────────────────────
+$white:        #ffffff;
+$bg:           #f7f8fa;
+$bg-card:      #ffffff;
+$border:       #e9eaec;
+$border-dark:  #d1d5db;
+
+$text-primary:   #0f1117;
+$text-secondary: #6b7280;
+$text-muted:     #9ca3af;
+
+$green:        #22c55e;
+$green-dark:   #16a34a;
+$green-bg:     #f0fdf4;
+$green-border: #bbf7d0;
+
+$red:    #ef4444;
+$red-bg: #fef2f2;
+
+$blue:    #3b82f6;
+$blue-bg: #eff6ff;
+
+$amber:    #f59e0b;
+$amber-bg: #fffbeb;
+
+// ── Skeleton ───────────────────────────────────────────────
+$skeleton-base:    #f0f0f2;
+$skeleton-shine:   #e0e0e4;
+
+// ── Spacing ────────────────────────────────────────────────
+$r-sm:  6px;
+$r-md:  10px;
+$r-lg:  14px;
+$r-xl:  18px;
+$r-2xl: 24px;
+
+// ── Shadows ────────────────────────────────────────────────
+$shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+$shadow-md: 0 4px 12px rgba(0,0,0,.08);
+
+// ── Transitions ────────────────────────────────────────────
+$ease: cubic-bezier(.4,0,.2,1);
+$t-fast: 120ms $ease;
+$t-base: 200ms $ease;
+
+// ── App shell (dashboard layout) ───────────────────────────
+$font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+$sidebar-width: 240px;
+$topbar-height: 64px;
+$color-bg-page: $bg;
+$color-bg-elevated: $white;
+$color-text: $text-primary;
+$color-sidebar: #1a1a2e;

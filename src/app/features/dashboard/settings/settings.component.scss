@@ -1,0 +1,64 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/page' as page;
+
+.set__head {
+  margin-bottom: 1.25rem;
+}
+
+.set__title {
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: $text-primary;
+}
+
+.set__sub {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: $text-muted;
+}
+
+.card {
+  @include page.card;
+  max-width: 480px;
+  padding: 1.25rem;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid $border;
+  font-size: 0.875rem;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.label {
+  color: $text-muted;
+  font-size: 0.8125rem;
+}
+
+.val {
+  font-weight: 500;
+  color: $text-primary;
+}
+
+.plan {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: $text-primary;
+  color: $white;
+}
+
+.muted {
+  font-size: 0.8125rem;
+  color: $text-muted;
+}

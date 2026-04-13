@@ -1,0 +1,76 @@
+<div class="wa">
+  @if (loading()) {
+    <app-skeleton-card />
+  } @else {
+    @if (conn(); as c) {
+      <div class="wa__head">
+        <h2 class="wa__title">WhatsApp</h2>
+        <p class="wa__sub">Your Business account is linked.</p>
+      </div>
+      <div class="card card--ok">
+        <div class="card__row">
+          <span class="card__label">Status</span>
+          <span class="pill" [class.pill--on]="c.status === 'connected'">{{ c.status }}</span>
+        </div>
+        <div class="card__row">
+          <span class="card__label">Display</span>
+          <span class="card__val">{{ c.displayName }}</span>
+        </div>
+        <div class="card__row">
+          <span class="card__label">Number</span>
+          <span class="card__val">{{ c.displayNumber }}</span>
+        </div>
+        <button type="button" class="btn-danger" (click)="disconnect()">Disconnect</button>
+      </div>
+    } @else {
+    <div class="wa__hero">
+      <h2 class="wa__title">Connect WhatsApp</h2>
+      <p class="wa__lead">
+        Sign in with Meta to link your WhatsApp Business Account. The business number comes from Meta
+        (first WABA / first phone in your app’s flow) — you don’t type it here.
+      </p>
+      <button
+        type="button"
+        class="btn-primary wa__connect-btn"
+        [disabled]="submitting()"
+        (click)="startConnect()"
+      >
+        {{ submitting() ? 'Connecting…' : 'Connect WhatsApp' }}
+      </button>
+      <p class="wa__hint">
+        In Meta Developer → your app → Facebook Login, add this <strong>Valid OAuth redirect URI</strong>:
+        <code class="wa__code">{{ redirectUriHint }}</code>
+      </p>
+    </div>
+
+    <details class="wa__manual">
+      <summary>Advanced: paste authorization code</summary>
+      <div class="card wa__manual-inner">
+        <p class="wa__manual-note">
+          If you already completed Meta’s flow elsewhere, paste the OAuth <code>code</code> here. The
+          app will call <code>POST /api/v1/meta/connect</code> with your JWT.
+        </p>
+        <div class="field">
+          <label for="code">Authorization code</label>
+          <input
+            id="code"
+            type="text"
+            [ngModel]="codeInput()"
+            (ngModelChange)="codeInput.set($event)"
+            placeholder="Paste code from Meta redirect"
+            autocomplete="off"
+          />
+        </div>
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="submitting() || !codeInput().trim()"
+          (click)="submitCode()"
+        >
+          {{ submitting() ? 'Connecting…' : 'Send code to API' }}
+        </button>
+      </div>
+    </details>
+    }
+  }
+</div>

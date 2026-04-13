@@ -1,0 +1,165 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/page' as page;
+
+.wa__head {
+  margin-bottom: 1.25rem;
+}
+
+.wa__title {
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: $text-primary;
+}
+
+.wa__sub {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: $text-muted;
+}
+
+.wa__hero {
+  max-width: 560px;
+  margin-bottom: 1.5rem;
+}
+
+.wa__lead {
+  margin: 0 0 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: $text-secondary;
+}
+
+.wa__connect-btn {
+  padding: 0.55rem 1.25rem;
+  font-size: 0.9375rem;
+}
+
+.wa__hint {
+  margin: 1rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: $text-muted;
+}
+
+.wa__code {
+  display: inline-block;
+  margin-top: 0.35rem;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.6875rem;
+  word-break: break-all;
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: $text-primary;
+}
+
+.wa__manual {
+  max-width: 560px;
+  font-size: 0.8125rem;
+  color: $text-secondary;
+
+  summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: $text-primary;
+  }
+}
+
+.wa__manual-inner {
+  margin-top: 0.75rem;
+}
+
+.wa__manual-note {
+  margin: 0 0 1rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: $text-muted;
+
+  code {
+    font-size: 0.6875rem;
+  }
+}
+
+.card {
+  @include page.card;
+  max-width: 520px;
+  padding: 1.25rem;
+}
+
+.card--ok {
+  border-color: $green-border;
+  background: linear-gradient(180deg, #fff 0%, #f8fdf9 100%);
+}
+
+.card__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.card__label {
+  color: $text-muted;
+}
+
+.card__val {
+  font-weight: 500;
+  color: $text-primary;
+  text-align: right;
+}
+
+.pill {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #f1f5f9;
+  text-transform: capitalize;
+}
+
+.pill--on {
+  background: $green-bg;
+  color: $green-dark;
+}
+
+.steps {
+  margin: 0 0 1rem 1.1rem;
+  padding: 0;
+  font-size: 0.8125rem;
+  color: $text-secondary;
+  line-height: 1.5;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  font-size: 0.75rem;
+  color: $text-secondary;
+}
+
+.field input {
+  @include page.input;
+}
+
+.btn-primary {
+  @include page.btn-primary;
+}
+
+.btn-danger {
+  @include page.btn-base;
+  margin-top: 0.5rem;
+  background: $white;
+  color: $red;
+  border: 1px solid #fecaca;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.8125rem;
+}
+
+.btn-danger:hover {
+  background: $red-bg;
+}

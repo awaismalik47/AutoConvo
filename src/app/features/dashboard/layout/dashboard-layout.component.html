@@ -1,0 +1,47 @@
+<div class="shell">
+  <aside class="sidebar" aria-label="Main navigation">
+    <div class="sidebar__brand">
+      <span class="sidebar__mark" aria-hidden="true">◆</span>
+      <span class="sidebar__name">AutoConvo</span>
+    </div>
+
+    <nav class="sidebar__nav">
+      @for (item of nav; track item.path) {
+        <a
+          class="sidebar__link"
+          [routerLink]="item.path"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/home' }"
+        >
+          <span class="sidebar__ico" aria-hidden="true">{{ item.icon }}</span>
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+
+    <button type="button" class="sidebar__logout" (click)="logout()">
+      Sign out
+    </button>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1 class="topbar__title">{{ pageTitle() }}</h1>
+      @if (auth.currentUser(); as user) {
+        <div class="topbar__user">
+          <div class="topbar__avatar">{{ user.name | initials }}</div>
+          <div class="topbar__meta">
+            <span class="topbar__name">{{ user.name }}</span>
+            @if (user.plan) {
+              <span class="topbar__plan">{{ user.plan | titlecase }}</span>
+            }
+          </div>
+        </div>
+      }
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+</div>
