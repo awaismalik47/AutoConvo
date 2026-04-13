@@ -38,9 +38,17 @@
           },
           "configurations": {
             "production": {
-              "optimization": true,
-              "extractLicenses": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": false
+              },
+              "extractLicenses": false,
               "sourceMap": false,
+              "namedChunks": false,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

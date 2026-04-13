@@ -6,7 +6,7 @@
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
-    "build:render": "NODE_OPTIONS='--max-old-space-size=240' UV_THREADPOOL_SIZE=1 ng build --configuration=production --progress=false",
+    "build:render": "NODE_OPTIONS='--max-old-space-size=400' UV_THREADPOOL_SIZE=1 ng build --configuration=production --progress=false --named-chunks=false",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
