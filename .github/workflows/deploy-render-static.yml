@@ -1,0 +1,51 @@
+# Builds the Angular app on GitHub-hosted runners (plenty of RAM), then force-pushes only
+# the browser bundle to branch `render-static` (no package.json → Render skips npm install).
+#
+# Render dashboard (Static Site):
+#   Branch: render-static
+#   Build command: (leave empty)
+#   Publish directory: .
+#   Add a rewrite: /* → /index.html for SPA routing
+#
+# Disable or remove any Render service that still builds from `main`, or you will keep hitting 512Mi OOM.
+name: Publish static site for Render
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-render-static
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Production build
+        run: npm run build -- --configuration=production
+
+      - name: Push to render-static branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist/autoconvo/browser
+          publish_branch: render-static
+          force_orphan: true
+          user_name: github-actions
+          user_email: github-actions[bot]@users.noreply.github.com
+          commit_message: 'deploy: static site'
