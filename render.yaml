@@ -1,0 +1,15 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Angular is built on GitHub Actions (.github/workflows/deploy-render-static.yml) and pushed to
+# branch `render-static`. This service must use that branch — do NOT build from `main` on Render
+# (512Mi will OOM on `npm install` + `ng build`).
+services:
+  - type: web
+    name: autoconvo
+    runtime: static
+    branch: render-static
+    buildCommand: "true"
+    staticPublishPath: .
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

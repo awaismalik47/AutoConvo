@@ -36,6 +36,15 @@ ng build
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
+## Deploying on Render (avoid 512Mi OOM)
+
+Angular’s production build plus `npm install` usually **exceeds Render’s 512Mi** builders. This repo is set up so you **do not build on Render**:
+
+1. **GitHub Actions** (`.github/workflows/deploy-render-static.yml`) builds on every push to `main` and pushes only static files to branch **`render-static`**.
+2. On Render, create a **Static Site** that uses branch **`render-static`**, **empty build command**, publish directory **`.`**.
+3. If you use **`render.yaml`**, sync the blueprint so the static site tracks **`render-static`** (not `main`).
+4. **Delete or disable** any old static site still building from **`main`**, or deploys will keep failing with out-of-memory errors.
+
 ## Running unit tests
 
 To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:

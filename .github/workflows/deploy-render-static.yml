@@ -34,9 +34,12 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --no-audit --no-fund
 
+      # Fresh GHA runners have plenty of RAM; avoid Render's 512Mi limit entirely.
       - name: Production build
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: npm run build -- --configuration=production
 
       - name: Push to render-static branch
