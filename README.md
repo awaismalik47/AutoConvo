@@ -45,6 +45,22 @@ Angular’s production build plus `npm install` usually **exceeds Render’s 512
 3. If you use **`render.yaml`**, sync the blueprint so the static site tracks **`render-static`** (not `main`).
 4. **Delete or disable** any old static site still building from **`main`**, or deploys will keep failing with out-of-memory errors.
 
+### SPA routing + OAuth (fix 404 on `/whatsapp`, etc.)
+
+Client-side routes like `/whatsapp` are **not** real files on the CDN. Without a rule, Meta’s redirect to `https://<your-site>/whatsapp?code=…` returns **404** and OAuth breaks.
+
+**You must add this in the Render dashboard** for your static site ([Redirects and rewrites](https://render.com/docs/redirects-rewrites)):
+
+| Action   | Source | Destination  |
+|----------|--------|--------------|
+| **Rewrite** | `/*`   | `/index.html` |
+
+`render.yaml` on **`main`** does **not** ship with the **`render-static`** branch, so dashboard rules (or a synced Blueprint that applies routes to this service) are what actually take effect.
+
+The workflow also copies **`404.html`** from `index.html` as a fallback where the host uses a custom 404 page.
+
+**Meta / Facebook Login:** under *Valid OAuth Redirect URIs*, keep the exact URL you use in production, e.g. `https://<your-subdomain>.onrender.com/whatsapp`.
+
 ## Running unit tests
 
 To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
