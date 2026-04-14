@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
@@ -17,6 +17,7 @@ export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
 
   readonly form = this.fb.nonNullable.group({
@@ -38,7 +39,15 @@ export class LoginComponent {
       .subscribe({
         next: () => {
           this.toast.success('Welcome back');
-          void this.router.navigate(['/home']);
+          const next = this.route.snapshot.queryParamMap.get('next');
+          const safe =
+            next &&
+            next.startsWith('/') &&
+            !next.startsWith('//') &&
+            !next.includes(':')
+              ? next
+              : '/home';
+          void this.router.navigateByUrl(safe);
         },
         error: (err: unknown) => {
           this.toast.error(getApiErrorMessage(err, 'Could not sign in'));

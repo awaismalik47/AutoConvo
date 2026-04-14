@@ -45,21 +45,25 @@ Angular’s production build plus `npm install` usually **exceeds Render’s 512
 3. If you use **`render.yaml`**, sync the blueprint so the static site tracks **`render-static`** (not `main`).
 4. **Delete or disable** any old static site still building from **`main`**, or deploys will keep failing with out-of-memory errors.
 
-### SPA routing + OAuth (fix 404 on `/whatsapp`, etc.)
+### SPA routing + OAuth
 
-Client-side routes like `/whatsapp` are **not** real files on the CDN. Without a rule, Meta’s redirect to `https://<your-site>/whatsapp?code=…` returns **404** and OAuth breaks.
+**OAuth redirect URI (code change):** Meta now redirects to **`https://<your-site>/`** (site root with trailing slash), not `/whatsapp`. The first HTTP request always loads `index.html`, so you avoid **404** on static hosts. The app then routes client-side to `/whatsapp` with the same `code` / `state` query params.
 
-**You must add this in the Render dashboard** for your static site ([Redirects and rewrites](https://render.com/docs/redirects-rewrites)):
+**Meta / Facebook Login → Valid OAuth Redirect URIs** must include **exactly**:
 
-| Action   | Source | Destination  |
-|----------|--------|--------------|
+`https://<your-subdomain>.onrender.com/`
+
+(You can remove the old `/whatsapp` callback from Meta if you added it earlier.)
+
+**Still recommended:** add a CDN **rewrite** so deep links like `/whatsapp` work on refresh ([Redirects and rewrites](https://render.com/docs/redirects-rewrites)):
+
+| Action   | Source | Destination   |
+|----------|--------|---------------|
 | **Rewrite** | `/*`   | `/index.html` |
 
-`render.yaml` on **`main`** does **not** ship with the **`render-static`** branch, so dashboard rules (or a synced Blueprint that applies routes to this service) are what actually take effect.
+`render.yaml` on **`main`** does **not** ship with the **`render-static`** branch unless you sync Blueprint from the default branch.
 
 The workflow also copies **`404.html`** from `index.html` as a fallback where the host uses a custom 404 page.
-
-**Meta / Facebook Login:** under *Valid OAuth Redirect URIs*, keep the exact URL you use in production, e.g. `https://<your-subdomain>.onrender.com/whatsapp`.
 
 ## Running unit tests
 

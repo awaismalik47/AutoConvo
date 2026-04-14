@@ -30,8 +30,8 @@ export class WhatsappComponent {
   readonly codeInput = signal('');
   readonly submitting = signal(false);
 
-  /** Shown so you can whitelist the same URI in Meta Developer → Facebook Login → Valid OAuth redirect URIs. */
-  readonly redirectUriHint = `${environment.frontendUrl.replace(/\/$/, '')}/whatsapp`;
+  /** Meta “Valid OAuth redirect URIs” must include this exact URL (site root, trailing slash). */
+  readonly redirectUriHint = `${environment.frontendUrl.replace(/\/$/, '')}/`;
 
   constructor() {
     const code = this.route.snapshot.queryParamMap.get('code');

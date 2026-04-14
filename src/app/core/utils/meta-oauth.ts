@@ -34,14 +34,17 @@ export function validateMetaOAuthState(returned: string | null): boolean {
 }
 
 /**
- * Facebook Login URL that returns an authorization `code` to
- * `{frontendUrl}/whatsapp?code=…&state=…`. Register that redirect URI in the Meta app.
+ * Facebook Login URL — redirect URI is **site root** (`{frontendUrl}/`) so static hosts
+ * always serve `index.html` (no `/whatsapp` file → 404 on Render without a rewrite).
+ * After load, the app forwards `?code=&state=` to `/whatsapp` client-side.
+ * Register **exactly** this URI in Meta: `https://your-domain.com/` (trailing slash as built below).
  */
 export function buildMetaOAuthAuthorizeUrl(): string | null {
   const appId = environment.metaAppId?.trim();
   if (!appId) return null;
 
-  const redirectUri = `${environment.frontendUrl.replace(/\/$/, '')}/whatsapp`;
+  const base = environment.frontendUrl.replace(/\/$/, '');
+  const redirectUri = `${base}/`;
   const params = new URLSearchParams({
     client_id: appId,
     redirect_uri: redirectUri,
