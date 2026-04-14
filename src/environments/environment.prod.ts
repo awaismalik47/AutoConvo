@@ -1,9 +1,9 @@
-const BASE = 'https://yourdomain.com';
+const BASE = 'https://intromissive-unspontaneously-deanna.ngrok-free.dev';
 
 export const environment = {
   production: true,
   devUseSameOriginApi: false,
-  frontendUrl: 'https://yourdomain.com',
+  frontendUrl: 'https://autoconvo.onrender.com',
   baseUrl: BASE,
   apiUrl: `${BASE}/api/v1`,
   socketUrl: BASE,
