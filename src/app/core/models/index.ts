@@ -21,11 +21,14 @@ export interface AuthResponse {
 }
 
 // ── Meta (WhatsApp / Facebook) ─────────────────────────
+/** From GET /meta/status — legacy rows may still report `standard`. */
 export type WhatsappConnectionMode = 'standard' | 'coexistence';
 
 export interface MetaIntegration {
   coexistence?: boolean;
   summary?: string;
+  /** e.g. `coexistence_only` — align UI copy with backend policy */
+  policy?: string;
   [key: string]: unknown;
 }
 
@@ -63,13 +66,17 @@ export interface WAConnection {
   connectionMode?: WhatsappConnectionMode;
   coexistence?: boolean;
   integrationSummary?: string;
+  integrationPolicy?: string;
 }
 
-/** POST /meta/connect JSON body */
+/**
+ * POST /meta/connect — send **`connectionMode` omitted** or **`coexistence` only**.
+ * Never send `standard` (backend validation).
+ */
 export interface MetaConnectBody {
   code: string;
   redirectUri: string;
-  connectionMode?: WhatsappConnectionMode;
+  connectionMode?: 'coexistence';
   wabaId?: string;
 }
 

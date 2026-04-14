@@ -35,7 +35,9 @@
             <span
               class="set__wa-pill"
               [class.set__wa-pill--coex]="ms.connectionMode === 'coexistence'"
-              >{{ connectionModeLabel(ms.connectionMode) }}</span
+              >{{
+                connectionModeLabel(ms.connectionMode, ms.integration?.policy)
+              }}</span
             >
           </div>
           @if (ms.integration?.coexistence) {

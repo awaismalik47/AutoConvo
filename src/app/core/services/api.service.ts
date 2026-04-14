@@ -199,7 +199,7 @@ export class ApiService {
     return this.http.get<{ state: string }>(`${this.base}/meta/oauth/state`);
   }
 
-  /** `connectionMode` / `wabaId` optional — Embedded Signup + coexistence flows. */
+  /** Omit `connectionMode` or send `coexistence` only — never `standard` (API validation). */
   metaConnect(body: MetaConnectBody): Observable<unknown> {
     return this.http.post(`${this.base}/meta/connect`, body);
   }

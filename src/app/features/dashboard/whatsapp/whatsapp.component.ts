@@ -89,10 +89,10 @@ export class WhatsappComponent {
         this.toast.error(evt.errorMessage);
         return;
       case 'finish':
+        // Backend rejects connectionMode: 'standard' — omit; optional wabaId when Meta sends it.
         this.connectWithPayload({
           code: evt.code,
           redirectUri: getMetaOAuthRedirectUri(),
-          connectionMode: 'standard',
           ...(evt.wabaId ? { wabaId: evt.wabaId } : {}),
         });
         return;
@@ -131,12 +131,15 @@ export class WhatsappComponent {
 
     const integ = st?.integration as MetaIntegration | undefined;
     const mode = st?.connectionMode as WhatsappConnectionMode | undefined;
+    const policy =
+      typeof integ?.policy === 'string' ? integ.policy : undefined;
     const base: WAConnection = {
       status: 'connected',
       connectionMode: mode,
       coexistence: integ?.coexistence === true,
       integrationSummary:
         typeof integ?.summary === 'string' ? integ.summary : undefined,
+      integrationPolicy: policy,
     };
 
     if (ph) {
@@ -219,9 +222,13 @@ export class WhatsappComponent {
       });
   }
 
-  connectionModeLabel(mode?: WhatsappConnectionMode): string {
+  connectionModeLabel(
+    mode?: WhatsappConnectionMode,
+    integrationPolicy?: string
+  ): string {
     if (mode === 'coexistence') return 'Coexistence';
-    if (mode === 'standard') return 'Standard';
+    if (mode === 'standard') return 'Standard (legacy)';
+    if (integrationPolicy === 'coexistence_only') return 'Coexistence';
     return '—';
   }
 

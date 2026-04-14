@@ -30,9 +30,13 @@ export class SettingsComponent {
       });
   }
 
-  connectionModeLabel(mode?: WhatsappConnectionMode): string {
+  connectionModeLabel(
+    mode?: WhatsappConnectionMode,
+    integrationPolicy?: string
+  ): string {
     if (mode === 'coexistence') return 'Coexistence';
-    if (mode === 'standard') return 'Standard';
+    if (mode === 'standard') return 'Standard (legacy)';
+    if (integrationPolicy === 'coexistence_only') return 'Coexistence';
     return '—';
   }
 
