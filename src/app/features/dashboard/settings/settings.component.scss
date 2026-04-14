@@ -62,3 +62,60 @@
   font-size: 0.8125rem;
   color: $text-muted;
 }
+
+.set__legal {
+  margin-top: 1.5rem;
+}
+
+.set__legal-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.set__legal-desc {
+  margin: 0 0 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: $text-muted;
+}
+
+.set__legal-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 420px) {
+  .set__legal-btns {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.set__btn {
+  @include page.btn-base;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  padding: 0.55rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: $r-md;
+  border: 1px solid transparent;
+}
+
+.set__btn--primary {
+  flex: 1;
+  min-width: 0;
+  background: $text-primary;
+  color: $white;
+  border-color: $text-primary;
+}
+
+.set__btn--primary:hover {
+  opacity: 0.92;
+}

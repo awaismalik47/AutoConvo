@@ -13,6 +13,20 @@ export const routes: Routes = [
       import('./features/billing/billing.routes').then((m) => m.billingRoutes),
   },
   {
+    path: 'privacy',
+    loadComponent: () =>
+      import('./features/legal/privacy-policy.component').then(
+        (m) => m.PrivacyPolicyComponent
+      ),
+  },
+  {
+    path: 'terms',
+    loadComponent: () =>
+      import('./features/legal/terms-of-service.component').then(
+        (m) => m.TermsOfServiceComponent
+      ),
+  },
+  {
     path: '',
     loadComponent: () =>
       import('./features/dashboard/layout/dashboard-layout.component').then(

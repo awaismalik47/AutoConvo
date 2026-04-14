@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [TitleCasePipe],
+  imports: [TitleCasePipe, RouterLink],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
 })

@@ -83,8 +83,39 @@
   text-align: center;
 }
 
-.sidebar__logout {
+.sidebar__legal {
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.75rem 0.5rem 0.5rem;
+}
+
+.sidebar__legal-btn {
+  display: block;
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  color: #e5e7eb;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: $r-md;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.sidebar__legal-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.sidebar__logout {
+  margin-top: 0;
   padding: 0.55rem 0.65rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: $r-md;
