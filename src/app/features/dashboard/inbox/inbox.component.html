@@ -1,15 +1,31 @@
 <div class="inbox">
   <aside class="inbox__list" aria-label="Conversations">
+    <div class="inbox__list-head">
+      <span class="inbox__list-title">Inbox</span>
+      <button
+        type="button"
+        class="btn-new"
+        [disabled]="loadingList()"
+        (click)="openNewMessage()"
+      >
+        New message
+      </button>
+    </div>
     @if (loadingList()) {
       <app-skeleton-row [count]="6" />
     } @else if (conversations().length === 0) {
-      <p class="inbox__empty">No conversations yet.</p>
+      <p class="inbox__empty">
+        No conversations yet. Use <strong>New message</strong> to send an approved template to a
+        number (required for first contact outside the care window).
+      </p>
     } @else {
       @for (c of conversations(); track convKey(c)) {
         <button
           type="button"
           class="conv"
-          [class.conv--active]="selectedPhone() === (c.phone ?? c.contactPhone)"
+          [class.conv--active]="
+            selectedPhone() === (c.phone ?? c.contactPhone) && !newMessageMode()
+          "
           (click)="selectPhone(c.phone ?? c.contactPhone ?? '')"
         >
           <div class="conv__top">
@@ -26,8 +42,87 @@
   </aside>
 
   <section class="inbox__thread" aria-label="Messages">
-    @if (!selectedPhone()) {
-      <div class="inbox__placeholder">Select a conversation</div>
+    @if (loadingList()) {
+      <div class="inbox__placeholder">Loading inbox…</div>
+    } @else if (newMessageMode()) {
+      <div class="inbox__new">
+        <h2 class="inbox__new-title">Start a conversation</h2>
+        <p class="inbox__new-lead">
+          For a <strong>first message</strong> or when the user has not messaged you recently, Meta
+          usually requires an <strong>approved template</strong> (not free-form text). Use the form
+          below. After they reply, you can use plain text in this thread.
+        </p>
+        <div class="field">
+          <label for="wa-to">WhatsApp number (E.164 digits)</label>
+          <input
+            id="wa-to"
+            type="text"
+            inputmode="tel"
+            autocomplete="tel"
+            placeholder="e.g. 447911123456"
+            [ngModel]="newPhone()"
+            (ngModelChange)="newPhone.set($event)"
+          />
+        </div>
+        @if (!loadingTemplates() && templates().length > 0) {
+          <div class="field">
+            <label for="wa-tpl-pick">Template (approved)</label>
+            <select
+              id="wa-tpl-pick"
+              class="inbox__select"
+              (change)="onTemplateSelect($event)"
+            >
+              <option value="">Choose a template…</option>
+              @for (t of templates(); track t.id) {
+                <option [value]="t.id">{{ t.name }} — {{ t.language }}</option>
+              }
+            </select>
+          </div>
+        }
+        <div class="field">
+          <label for="wa-tpl-name">Template name</label>
+          <input
+            id="wa-tpl-name"
+            type="text"
+            placeholder="hello_world"
+            [ngModel]="templateName()"
+            (ngModelChange)="templateName.set($event)"
+          />
+        </div>
+        <div class="field">
+          <label for="wa-tpl-lang">Language code</label>
+          <input
+            id="wa-tpl-lang"
+            type="text"
+            placeholder="en"
+            [ngModel]="templateLang()"
+            (ngModelChange)="templateLang.set($event)"
+          />
+        </div>
+        <div class="field">
+          <label for="wa-tpl-comp">Template components (JSON array, optional)</label>
+          <textarea
+            id="wa-tpl-comp"
+            rows="2"
+            class="inbox__json"
+            placeholder="[]"
+            [ngModel]="templateComponentsJson()"
+            (ngModelChange)="templateComponentsJson.set($event)"
+          ></textarea>
+        </div>
+        <button
+          type="button"
+          class="btn-send-template"
+          [disabled]="sendingTemplate() || !newPhone().trim() || !templateName().trim()"
+          (click)="sendTemplateFirst()"
+        >
+          {{ sendingTemplate() ? 'Sending…' : 'Send template' }}
+        </button>
+      </div>
+    } @else if (!selectedPhone()) {
+      <div class="inbox__placeholder">
+        <p>Select a conversation on the left, or click <strong>New message</strong> to send a template.</p>
+      </div>
     } @else if (loadingMessages()) {
       <div class="inbox__msgs-skel">
         @for (x of [1, 2, 3, 4]; track x) {
@@ -35,6 +130,9 @@
         }
       </div>
     } @else {
+      <div class="inbox__thread-head">
+        <span class="inbox__thread-num">{{ selectedPhone() }}</span>
+      </div>
       <div class="inbox__msgs">
         @for (m of messages(); track m.id) {
           <div class="msg" [class.msg--out]="m.direction === 'outbound'">
@@ -48,16 +146,27 @@
           </div>
         }
       </div>
+      <p class="inbox__hint">
+        Replies use free text when Meta’s customer care window is open. If sending fails, try an
+        approved template or check the API error message.
+      </p>
       <div class="inbox__composer">
         <textarea
           rows="2"
-          placeholder="Type a message…"
+          placeholder="Type a reply…"
           [ngModel]="draft()"
           (ngModelChange)="draft.set($event)"
           (keydown.control.enter)="send()"
           (keydown.meta.enter)="send()"
         ></textarea>
-        <button type="button" class="btn-send" (click)="send()">Send</button>
+        <button
+          type="button"
+          class="btn-send"
+          [disabled]="sendingText()"
+          (click)="send()"
+        >
+          {{ sendingText() ? '…' : 'Send' }}
+        </button>
       </div>
     }
   </section>
