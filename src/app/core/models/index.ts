@@ -21,13 +21,23 @@ export interface AuthResponse {
 }
 
 // ── Meta (WhatsApp / Facebook) ─────────────────────────
+export type WhatsappConnectionMode = 'standard' | 'coexistence';
+
+export interface MetaIntegration {
+  coexistence?: boolean;
+  summary?: string;
+  [key: string]: unknown;
+}
+
 export interface MetaStatus {
   connected?: boolean;
   status?: string;
+  connectionMode?: WhatsappConnectionMode;
   displayNumber?: string;
   displayName?: string;
   display_number?: string;
   display_name?: string;
+  integration?: MetaIntegration;
   [key: string]: unknown;
 }
 
@@ -43,13 +53,24 @@ export interface MetaPhoneInfo {
   [key: string]: unknown;
 }
 
-/** Legacy shape used by WhatsApp feature — map from Meta DTOs */
+/** WhatsApp linked account — map from Meta DTOs + GET /meta/status */
 export interface WAConnection {
   phoneNumberId?: string;
   wabaId?: string;
   displayNumber?: string;
   displayName?: string;
   status?: 'connected' | 'disconnected' | 'pending' | string;
+  connectionMode?: WhatsappConnectionMode;
+  coexistence?: boolean;
+  integrationSummary?: string;
+}
+
+/** POST /meta/connect JSON body */
+export interface MetaConnectBody {
+  code: string;
+  redirectUri: string;
+  connectionMode?: WhatsappConnectionMode;
+  wabaId?: string;
 }
 
 // ── Contacts ────────────────────────────────────────────

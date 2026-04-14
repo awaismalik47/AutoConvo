@@ -137,6 +137,42 @@
   color: $green-dark;
 }
 
+.pill--standard {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.pill--coexistence {
+  background: #f5f3ff;
+  color: #5b21b6;
+}
+
+.wa__coex {
+  margin: 0 0 0.85rem;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: $text-secondary;
+  background: #fafbfc;
+  border: 1px solid $border;
+  border-radius: $r-md;
+}
+
+.wa__coex-summary {
+  margin: 0 0 0.5rem;
+}
+
+.wa__coex-link {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: $green-dark;
+  text-decoration: none;
+}
+
+.wa__coex-link:hover {
+  text-decoration: underline;
+}
+
 .steps {
   margin: 0 0 1rem 1.1rem;
   padding: 0;

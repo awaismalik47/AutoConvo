@@ -13,6 +13,30 @@
           <span class="pill" [class.pill--on]="c.status === 'connected'">{{ c.status }}</span>
         </div>
         <div class="card__row">
+          <span class="card__label">Connection</span>
+          <span
+            class="pill"
+            [class.pill--coexistence]="c.connectionMode === 'coexistence'"
+            [class.pill--standard]="c.connectionMode === 'standard'"
+          >
+            {{ connectionModeLabel(c.connectionMode) }}
+          </span>
+        </div>
+        @if (c.coexistence) {
+          <div class="wa__coex">
+            @if (c.integrationSummary) {
+              <p class="wa__coex-summary">{{ c.integrationSummary }}</p>
+            }
+            <a
+              class="wa__coex-link"
+              [href]="coexistenceHelpUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Coexistence &amp; Embedded Signup (Meta)</a
+            >
+          </div>
+        }
+        <div class="card__row">
           <span class="card__label">Display</span>
           <span class="card__val">{{ c.displayName }}</span>
         </div>
@@ -30,8 +54,10 @@
     <div class="wa__hero">
       <h2 class="wa__title">Connect WhatsApp</h2>
       <p class="wa__lead">
-        Sign in with Meta to link your WhatsApp Business Account. The business number comes from Meta
-        (first WABA / first phone in your app’s flow) — you don’t type it here.
+        Sign in with Meta to link your WhatsApp Business Account. Embedded Signup can complete in-page
+        (listen for Meta <code>postMessage</code>); redirect OAuth also works. Use
+        <strong>coexistence</strong> onboarding in Meta if you keep the WhatsApp Business app on the same
+        number.
       </p>
       <button
         type="button"

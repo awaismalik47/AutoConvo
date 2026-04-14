@@ -16,6 +16,7 @@ import type {
   CreateBroadcastPayload,
   DashboardStats,
   Message,
+  MetaConnectBody,
   MetaPhoneInfo,
   MetaStatus,
   SendTemplatePayload,
@@ -198,8 +199,8 @@ export class ApiService {
     return this.http.get<{ state: string }>(`${this.base}/meta/oauth/state`);
   }
 
-  /** Body must match API: `redirectUri` camelCase, same string as in the OAuth dialog. */
-  metaConnect(body: { code: string; redirectUri: string }): Observable<unknown> {
+  /** `connectionMode` / `wabaId` optional — Embedded Signup + coexistence flows. */
+  metaConnect(body: MetaConnectBody): Observable<unknown> {
     return this.http.post(`${this.base}/meta/connect`, body);
   }
 

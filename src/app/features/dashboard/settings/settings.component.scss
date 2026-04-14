@@ -63,6 +63,55 @@
   color: $text-muted;
 }
 
+.set__wa {
+  margin-top: 1.5rem;
+}
+
+.set__wa-title {
+  margin: 0 0 0.85rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.set__wa-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.set__wa-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.set__wa-pill--coex {
+  background: #f5f3ff;
+  color: #5b21b6;
+}
+
+.set__wa-hint {
+  margin: 0.65rem 0 0;
+  font-size: 0.8125rem;
+  color: $text-muted;
+}
+
+.set__wa-hint a {
+  color: $green-dark;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.set__wa-hint a:hover {
+  text-decoration: underline;
+}
+
 .set__legal {
   margin-top: 1.5rem;
 }

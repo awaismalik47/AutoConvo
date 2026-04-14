@@ -23,6 +23,36 @@
     <p class="muted">No profile loaded.</p>
   }
 
+  <div class="set__wa card">
+    <h3 class="set__wa-title">WhatsApp</h3>
+    @if (metaLoading()) {
+      <p class="muted">Loading integration…</p>
+    } @else {
+      @if (metaStatus(); as ms) {
+        @if (waConnected(ms)) {
+          <div class="set__wa-row">
+            <span class="label">Connection mode</span>
+            <span
+              class="set__wa-pill"
+              [class.set__wa-pill--coex]="ms.connectionMode === 'coexistence'"
+              >{{ connectionModeLabel(ms.connectionMode) }}</span
+            >
+          </div>
+          @if (ms.integration?.coexistence) {
+            <p class="set__wa-hint">
+              Coexistence is active.
+              <a routerLink="/whatsapp">Manage on WhatsApp page</a>
+            </p>
+          }
+        } @else {
+          <p class="muted">Not connected. <a routerLink="/whatsapp">Connect WhatsApp</a></p>
+        }
+      } @else {
+        <p class="muted">Could not load integration status.</p>
+      }
+    }
+  </div>
+
   <div class="set__legal card">
     <h3 class="set__legal-title">Legal</h3>
     <p class="set__legal-desc">
