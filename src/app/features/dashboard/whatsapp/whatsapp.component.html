@@ -21,6 +21,10 @@
           <span class="card__val">{{ c.displayNumber }}</span>
         </div>
         <button type="button" class="btn-danger" (click)="disconnect()">Disconnect</button>
+        <p class="wa__disconnect-note">
+          Disconnect unlinks your WhatsApp connection in this app only. It does not revoke Meta permissions by
+          itself; that would need Meta’s revocation APIs if we add them later.
+        </p>
       </div>
     } @else {
     <div class="wa__hero">

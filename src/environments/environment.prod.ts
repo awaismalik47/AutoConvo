@@ -7,7 +7,6 @@ export const environment = {
   baseUrl: BASE,
   apiUrl: `${BASE}/api/v1`,
   socketUrl: BASE,
-  ngrokSkipBrowserWarning: null as string | null,
 
   metaAppId: '2393789204474392',
   metaGraphVersion: 'v21.0',

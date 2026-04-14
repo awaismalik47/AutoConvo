@@ -1,0 +1,13 @@
+# Copy to ~/.config/ngrok/ngrok.yml (or set NGROK_CONFIG) and replace values.
+# Tunnel-side header is optional if the Angular app already sends
+# `ngrok-skip-browser-warning` (see src/app/core/interceptors/ngrok.interceptor.ts).
+
+version: '2'
+authtoken: YOUR_NGROK_AUTHTOKEN
+tunnels:
+  backend:
+    proto: http
+    addr: 3000
+    request_header:
+      add:
+        - 'ngrok-skip-browser-warning: true'

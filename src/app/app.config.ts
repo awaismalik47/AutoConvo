@@ -9,6 +9,7 @@ import { provideRouter, withComponentInputBinding, Router } from '@angular/route
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { ngrokInterceptor } from './core/interceptors/ngrok.interceptor';
 
 /** Meta OAuth uses redirect `{frontendUrl}/` — forward `?code=` to `/whatsapp` before first route activates. */
 const metaOAuthRedirectInitializer = () => {
@@ -30,7 +31,7 @@ const metaOAuthRedirectInitializer = () => {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([ngrokInterceptor, authInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
     provideAppInitializer(metaOAuthRedirectInitializer),
   ],

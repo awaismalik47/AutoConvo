@@ -27,13 +27,6 @@ export const environment = {
    */
   apiUrl: `${BASE}/api/v1`,
   socketUrl: BASE,
-  /**
-   * If set to `'true'`, every request sends `ngrok-skip-browser-warning` (helps some ngrok free flows).
-   * That counts as a custom header → CORS preflight must list it:
-   * `Access-Control-Allow-Headers` must include `ngrok-skip-browser-warning` (plus e.g. `Authorization`, `Content-Type`).
-   * Leave `null` until the API allows that header, or login/XHR will fail with a CORS error.
-   */
-  ngrokSkipBrowserWarning: null as string | null,
 
   /**
    * Meta (Facebook) App ID — required for “Connect WhatsApp”.
