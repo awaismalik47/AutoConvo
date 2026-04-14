@@ -3,7 +3,7 @@ const BASE = 'https://intromissive-unspontaneously-deanna.ngrok-free.dev';
 export const environment = {
   production: true,
   devUseSameOriginApi: false,
-  frontendUrl: 'https://autoconvo.onrender.com',
+  frontendUrl: 'https://autoconvo-lgpj.onrender.com',
   baseUrl: BASE,
   apiUrl: `${BASE}/api/v1`,
   socketUrl: BASE,
