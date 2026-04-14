@@ -154,7 +154,13 @@ export class ApiService {
   }
 
   // ── Meta (WhatsApp) ───────────────────────────────────
-  metaConnect(body: Record<string, unknown>): Observable<unknown> {
+  /** Server OAuth state for Facebook Login — use in `buildMetaOAuthAuthorizeUrl({ state })`. */
+  getMetaOAuthState(): Observable<{ state: string }> {
+    return this.http.get<{ state: string }>(`${this.base}/meta/oauth/state`);
+  }
+
+  /** Body must match API: `redirectUri` camelCase, same string as in the OAuth dialog. */
+  metaConnect(body: { code: string; redirectUri: string }): Observable<unknown> {
     return this.http.post(`${this.base}/meta/connect`, body);
   }
 

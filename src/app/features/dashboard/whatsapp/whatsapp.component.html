@@ -52,7 +52,8 @@
       <div class="card wa__manual-inner">
         <p class="wa__manual-note">
           If you already completed Meta’s flow elsewhere, paste the OAuth <code>code</code> here. The
-          app will call <code>POST /api/v1/meta/connect</code> with your JWT.
+          app will call <code>POST /api/v1/meta/connect</code> with your JWT, <code>code</code>, and
+          <code>redirectUri</code> (must match the OAuth dialog).
         </p>
         <div class="field">
           <label for="code">Authorization code</label>

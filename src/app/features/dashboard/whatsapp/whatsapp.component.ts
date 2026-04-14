@@ -8,9 +8,9 @@ import type { WAConnection } from '../../../core/models';
 import { SkeletonCardComponent } from '../../../shared/components/skeleton/skeleton-card.component';
 import {
   buildMetaOAuthAuthorizeUrl,
+  getMetaOAuthRedirectUri,
   validateMetaOAuthState,
 } from '../../../core/utils/meta-oauth';
-import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-whatsapp',
@@ -31,7 +31,7 @@ export class WhatsappComponent {
   readonly submitting = signal(false);
 
   /** Meta “Valid OAuth redirect URIs” must include this exact URL (site root, trailing slash). */
-  readonly redirectUriHint = `${environment.frontendUrl.replace(/\/$/, '')}/`;
+  readonly redirectUriHint = getMetaOAuthRedirectUri();
 
   constructor() {
     const code = this.route.snapshot.queryParamMap.get('code');
@@ -88,16 +88,30 @@ export class WhatsappComponent {
     });
   }
 
-  /** Opens Meta OAuth; after login Meta redirects here with ?code=… */
+  /** Opens Meta OAuth; fetches `state` from API first, then Meta redirects with ?code=… */
   startConnect(): void {
-    const url = buildMetaOAuthAuthorizeUrl();
-    if (!url) {
-      this.toast.error(
-        'Set metaAppId in environment and whitelist the redirect URI in your Meta app.'
-      );
-      return;
-    }
-    window.location.href = url;
+    this.api.getMetaOAuthState().subscribe({
+      next: ({ state }) => {
+        const url = buildMetaOAuthAuthorizeUrl({ state });
+        if (!url) {
+          this.toast.error(
+            'Set metaAppId in environment and whitelist the redirect URI in your Meta app.'
+          );
+          return;
+        }
+        window.location.href = url;
+      },
+      error: () => {
+        const url = buildMetaOAuthAuthorizeUrl();
+        if (!url) {
+          this.toast.error(
+            'Set metaAppId in environment and whitelist the redirect URI in your Meta app.'
+          );
+          return;
+        }
+        window.location.href = url;
+      },
+    });
   }
 
   submitCode(): void {
@@ -110,7 +124,10 @@ export class WhatsappComponent {
     if (this.submitting()) return;
     this.submitting.set(true);
     this.api
-      .metaConnect({ code })
+      .metaConnect({
+        code,
+        redirectUri: getMetaOAuthRedirectUri(),
+      })
       .pipe(
         catchError((err) => {
           this.toast.error(err?.error?.message || 'Connection failed');
