@@ -21,7 +21,38 @@ import type {
   SendTemplatePayload,
   SendTextPayload,
   Template,
+  WhatsAppTemplatePreset,
 } from '../models';
+
+function normalizeWhatsAppTemplatePresets(raw: unknown): WhatsAppTemplatePreset[] {
+  let rows: unknown[] = [];
+  if (Array.isArray(raw)) rows = raw;
+  else if (raw && typeof raw === 'object') {
+    const o = raw as Record<string, unknown>;
+    const a = o['defaults'] ?? o['data'] ?? o['presets'] ?? o['templates'];
+    if (Array.isArray(a)) rows = a;
+  }
+  const out: WhatsAppTemplatePreset[] = [];
+  for (const item of rows) {
+    const r = (item ?? {}) as Record<string, unknown>;
+    const templateName = String(
+      r['templateName'] ?? r['template_name'] ?? r['name'] ?? ''
+    ).trim();
+    if (!templateName) continue;
+    const label = String(
+      r['label'] ?? r['title'] ?? templateName
+    ).trim();
+    const languageCode = String(
+      r['languageCode'] ?? r['language_code'] ?? r['language'] ?? 'en'
+    ).trim();
+    out.push({
+      label: label || templateName,
+      templateName,
+      languageCode: languageCode || 'en',
+    });
+  }
+  return out;
+}
 
 /** Maps arbitrary API JSON to {@link DashboardStats}. */
 function normalizeDashboard(raw: unknown): DashboardStats {
@@ -140,8 +171,16 @@ export class ApiService {
   constructor(private readonly http: HttpClient) {}
 
   // ── Auth (public) ─────────────────────────────────────
+  /** Nest may return `{ user }` or a flat user — normalize to {@link AuthUser}. */
   getAuthMe(): Observable<AuthUser> {
-    return this.http.get<AuthUser>(`${this.base}/auth/me`);
+    return this.http.get<unknown>(`${this.base}/auth/me`).pipe(
+      map((raw) => {
+        if (raw && typeof raw === 'object' && 'user' in raw) {
+          return (raw as { user: AuthUser }).user;
+        }
+        return raw as AuthUser;
+      })
+    );
   }
 
   // ── Users ───────────────────────────────────────────────
@@ -177,6 +216,13 @@ export class ApiService {
   }
 
   // ── Messages ────────────────────────────────────────────
+  /** Suggested template names/languages for inbox quick-picks (see `default-whatsapp-templates.ts` fallback). */
+  getMessageTemplateDefaults(): Observable<WhatsAppTemplatePreset[]> {
+    return this.http
+      .get<unknown>(`${this.base}/messages/templates/defaults`)
+      .pipe(map(normalizeWhatsAppTemplatePresets));
+  }
+
   sendTextMessage(payload: SendTextPayload): Observable<unknown> {
     return this.http.post(`${this.base}/messages/send/text`, payload);
   }

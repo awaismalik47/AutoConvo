@@ -13,7 +13,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(cloned).pipe(
     catchError((err: HttpErrorResponse) => {
-      // Only clear session when a token was sent (avoid logout on failed login/register).
+      // 401 on a protected call: clear session and redirect to login (AuthService.logout).
       if (err.status === 401 && token) auth.logout();
       return throwError(() => err);
     })

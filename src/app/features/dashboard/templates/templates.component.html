@@ -2,9 +2,23 @@
   <div class="tpl__head">
     <div>
       <h2 class="tpl__title">Message templates</h2>
-      <p class="tpl__sub">Manage WhatsApp template messages.</p>
+      <p class="tpl__sub">
+        Approved templates usually come from
+        <strong>Meta Business Manager</strong> or your API. Sync pulls the latest into this app;
+        “New template” submits one to your backend (if supported).
+      </p>
     </div>
-    <button type="button" class="tpl__primary" (click)="openModal()">New template</button>
+    <div class="tpl__actions">
+      <button
+        type="button"
+        class="tpl__sync"
+        [disabled]="syncing() || loading()"
+        (click)="syncFromWhatsApp()"
+      >
+        {{ syncing() ? 'Syncing…' : 'Sync from WhatsApp' }}
+      </button>
+      <button type="button" class="tpl__primary" (click)="openModal()">New template</button>
+    </div>
   </div>
 
   @if (loading()) {
@@ -39,9 +53,24 @@
                 <button type="button" class="link" (click)="remove(t.id)">Delete</button>
               </td>
             </tr>
-          } @empty {
+          }           @empty {
             <tr>
-              <td colspan="6" class="td-empty">No templates yet.</td>
+              <td colspan="6" class="td-empty td-empty--cta">
+                <p>No templates in this app yet.</p>
+                <div class="td-empty__btns">
+                  <button
+                    type="button"
+                    class="tpl__sync tpl__sync--inline"
+                    [disabled]="syncing()"
+                    (click)="syncFromWhatsApp()"
+                  >
+                    {{ syncing() ? 'Syncing…' : 'Sync from WhatsApp' }}
+                  </button>
+                  <button type="button" class="tpl__primary tpl__primary--inline" (click)="openModal()">
+                    New template
+                  </button>
+                </div>
+              </td>
             </tr>
           }
         </tbody>
@@ -51,9 +80,15 @@
 </div>
 
 @if (modalOpen()) {
-  <div class="modal-backdrop" (click)="closeModal()"></div>
-  <div class="modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
-    <h2 class="modal__title">Create template</h2>
+  <div class="modal-backdrop" role="presentation" (click)="closeModal()"></div>
+  <div
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="tpl-modal-title"
+    (click)="$event.stopPropagation()"
+  >
+    <h2 id="tpl-modal-title" class="modal__title">Create template</h2>
     <p class="modal__hint">Submission may require WhatsApp review.</p>
     <form class="modal__form" [formGroup]="form" (ngSubmit)="create()">
       <label class="field">

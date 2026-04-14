@@ -52,6 +52,21 @@
           usually requires an <strong>approved template</strong> (not free-form text). Use the form
           below. After they reply, you can use plain text in this thread.
         </p>
+        @if (templatePresets().length > 0) {
+          <div class="inbox__presets" aria-label="Template quick picks">
+            <span class="inbox__presets-label">Quick picks</span>
+            <div class="inbox__presets-chips">
+              @for (p of templatePresets(); track p.templateName + ':' + p.languageCode) {
+                <button type="button" class="inbox__chip" (click)="applyPreset(p)">
+                  {{ p.label }}
+                </button>
+              }
+            </div>
+            <p class="inbox__presets-hint">
+              Names must exist in Meta for your account (API defaults or fallbacks).
+            </p>
+          </div>
+        }
         <div class="field">
           <label for="wa-to">WhatsApp number (E.164 digits)</label>
           <input

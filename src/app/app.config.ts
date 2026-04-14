@@ -27,10 +27,11 @@ const metaOAuthRedirectInitializer = () => {
   });
 };
 
-/** App-wide providers: HTTP (JWT + ngrok header), router, zone optimization. */
+/** App-wide providers: HTTP (JWT + ngrok bypass header), router, zone optimization. */
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
+    // Integration: `Authorization` + `ngrok-skip-browser-warning` (standalone apps use app.config, not main.ts).
     provideHttpClient(withInterceptors([ngrokInterceptor, authInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
     provideAppInitializer(metaOAuthRedirectInitializer),

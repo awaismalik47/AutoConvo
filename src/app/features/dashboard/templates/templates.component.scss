@@ -8,6 +8,7 @@
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1.25rem;
+  flex-wrap: wrap;
 }
 
 .tpl__title {
@@ -20,12 +21,40 @@
 
 .tpl__sub {
   margin: 0;
+  max-width: 560px;
   font-size: 0.8125rem;
+  line-height: 1.5;
   color: $text-muted;
+}
+
+.tpl__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.tpl__sync {
+  @include page.btn-ghost;
+  white-space: nowrap;
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.tpl__sync--inline {
+  font-size: 0.8125rem;
 }
 
 .tpl__primary {
   @include page.btn-primary;
+  white-space: nowrap;
+}
+
+.tpl__primary--inline {
+  font-size: 0.8125rem;
 }
 
 .table-wrap {
@@ -71,6 +100,19 @@
   padding: 2rem 1rem !important;
 }
 
+.td-empty--cta p {
+  margin: 0 0 1rem;
+  font-size: 0.8125rem;
+}
+
+.td-empty__btns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
 .td-actions {
   text-align: right;
 }
@@ -113,7 +155,7 @@
   position: fixed;
   inset: 0;
   background: rgba(15, 17, 23, 0.35);
-  z-index: 8000;
+  z-index: 10000;
 }
 
 .modal {
@@ -121,7 +163,7 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: 8001;
+  z-index: 10001;
   width: min(460px, calc(100vw - 2rem));
   max-height: calc(100vh - 2rem);
   overflow-y: auto;

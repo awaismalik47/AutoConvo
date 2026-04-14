@@ -122,6 +122,13 @@ export interface SendTemplatePayload {
   components?: unknown;
 }
 
+/** Suggested templates from GET /messages/templates/defaults (or UI fallbacks). */
+export interface WhatsAppTemplatePreset {
+  label: string;
+  templateName: string;
+  languageCode: string;
+}
+
 // ── Broadcast ───────────────────────────────────────────
 export type BroadcastStatus =
   | 'draft'

@@ -153,6 +153,50 @@
   color: $text-secondary;
 }
 
+.inbox__presets {
+  margin-bottom: 1.25rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: $r-md;
+  border: 1px dashed $border;
+  background: #fafbfc;
+}
+
+.inbox__presets-label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $text-muted;
+  margin-bottom: 0.45rem;
+}
+
+.inbox__presets-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.inbox__chip {
+  font: inherit;
+  font-size: 0.75rem;
+  padding: 0.28rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid $border;
+  background: $white;
+  color: $text-primary;
+  cursor: pointer;
+  &:hover {
+    background: #f1f5f9;
+  }
+}
+
+.inbox__presets-hint {
+  margin: 0.45rem 0 0;
+  font-size: 0.6875rem;
+  color: $text-muted;
+}
+
 .inbox__new .field {
   display: flex;
   flex-direction: column;

@@ -1,9 +1,16 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { catchError, finalize, of, switchMap } from 'rxjs';
+import { catchError, finalize, forkJoin, of, switchMap } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 import { ToastService } from '../../../core/services/toast.service';
-import type { Conversation, Message, Template } from '../../../core/models';
+import { FALLBACK_WHATSAPP_TEMPLATE_PRESETS } from '../../../core/constants/default-whatsapp-templates';
+import { getApiErrorMessage } from '../../../core/utils/api-error';
+import type {
+  Conversation,
+  Message,
+  Template,
+  WhatsAppTemplatePreset,
+} from '../../../core/models';
 import { TimeagoPipe } from '../../../shared/pipes/pipes';
 import { TruncatePipe } from '../../../shared/pipes/pipes';
 import { SkeletonRowComponent } from '../../../shared/components/skeleton/skeleton-row.component';
@@ -29,6 +36,8 @@ export class InboxComponent {
   readonly loadingTemplates = signal(true);
   readonly conversations = signal<Conversation[]>([]);
   readonly templates = signal<Template[]>([]);
+  /** API defaults or {@link FALLBACK_WHATSAPP_TEMPLATE_PRESETS} — quick-pick chips. */
+  readonly templatePresets = signal<WhatsAppTemplatePreset[]>([]);
   /** E.164 digits for thread + send */
   readonly selectedPhone = signal<string | null>(null);
   readonly messages = signal<Message[]>([]);
@@ -45,16 +54,21 @@ export class InboxComponent {
   readonly sendingText = signal(false);
 
   constructor() {
-    this.api
-      .getTemplates()
-      .pipe(catchError(() => of([] as Template[])))
-      .subscribe((rows) => {
-        const approved = rows.filter(
-          (t) => String(t.status).toLowerCase() === 'approved'
-        );
-        this.templates.set(approved);
-        this.loadingTemplates.set(false);
-      });
+    forkJoin({
+      tpl: this.api.getTemplates().pipe(catchError(() => of([] as Template[]))),
+      defaults: this.api
+        .getMessageTemplateDefaults()
+        .pipe(catchError(() => of([] as WhatsAppTemplatePreset[]))),
+    }).subscribe(({ tpl, defaults }) => {
+      const approved = tpl.filter(
+        (t) => String(t.status).toLowerCase() === 'approved'
+      );
+      this.templates.set(approved);
+      const presets =
+        defaults.length > 0 ? defaults : FALLBACK_WHATSAPP_TEMPLATE_PRESETS;
+      this.templatePresets.set(presets);
+      this.loadingTemplates.set(false);
+    });
 
     this.api
       .getMessageConversations()
@@ -109,6 +123,11 @@ export class InboxComponent {
     }
   }
 
+  applyPreset(p: WhatsAppTemplatePreset): void {
+    this.templateName.set(p.templateName);
+    this.templateLang.set(p.languageCode || 'en');
+  }
+
   sendTemplateFirst(): void {
     const rawTo = normalizeWaTo(this.newPhone());
     const name = this.templateName().trim();
@@ -143,7 +162,7 @@ export class InboxComponent {
         ),
         catchError((err) => {
           this.toast.error(
-            err?.error?.message || 'Could not send template (check Meta policy)'
+            getApiErrorMessage(err, 'Could not send template (check Meta policy)')
           );
           return of(null);
         }),
@@ -170,7 +189,7 @@ export class InboxComponent {
       .pipe(
         switchMap(() => this.api.getMessageThread(phone, 1, 80)),
         catchError((err) => {
-          this.toast.error(err?.error?.message || 'Could not send');
+          this.toast.error(getApiErrorMessage(err, 'Could not send'));
           return of(null);
         }),
         finalize(() => this.sendingText.set(false))

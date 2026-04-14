@@ -1,4 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, finalize, of } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
@@ -25,6 +30,7 @@ export class TemplatesComponent {
   readonly rows = signal<Template[]>([]);
   readonly modalOpen = signal(false);
   readonly saving = signal(false);
+  readonly syncing = signal(false);
 
   readonly categories: TemplateCategory[] = [
     'MARKETING',
@@ -66,6 +72,32 @@ export class TemplatesComponent {
 
   closeModal(): void {
     this.modalOpen.set(false);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.modalOpen()) this.closeModal();
+  }
+
+  /** Pulls approved templates from Meta into this app (primary workflow for many WABAs). */
+  syncFromWhatsApp(): void {
+    if (this.syncing()) return;
+    this.syncing.set(true);
+    this.api
+      .syncTemplates()
+      .pipe(
+        catchError((err) => {
+          this.toast.error(err?.error?.message || 'Sync failed');
+          return of(null);
+        }),
+        finalize(() => this.syncing.set(false))
+      )
+      .subscribe((res) => {
+        if (res !== null) {
+          this.toast.success('Templates synced');
+          this.reload();
+        }
+      });
   }
 
   create(): void {
