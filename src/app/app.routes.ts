@@ -13,7 +13,7 @@ export const routes: Routes = [
       import('./features/billing/billing.routes').then((m) => m.billingRoutes),
   },
   {
-    path: 'privacy',
+    path: 'privacy-policy',
     loadComponent: () =>
       import('./features/legal/privacy-policy.component').then(
         (m) => m.PrivacyPolicyComponent
