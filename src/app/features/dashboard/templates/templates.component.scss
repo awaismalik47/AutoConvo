@@ -27,6 +27,62 @@
   color: $text-muted;
 }
 
+.tpl__examples {
+  margin-bottom: 1.25rem;
+}
+
+.tpl__examples-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.tpl__examples-hint {
+  margin: 0 0 0.65rem;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: $text-muted;
+}
+
+.tpl__examples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+
+.tpl__example-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border-radius: $r-lg;
+  border: 1px solid $border;
+  background: $white;
+  cursor: pointer;
+  font: inherit;
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: $blue;
+  }
+}
+
+.tpl__example-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: $text-primary;
+}
+
+.tpl__example-meta {
+  font-size: 0.6875rem;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
 .tpl__actions {
   display: flex;
   flex-wrap: wrap;

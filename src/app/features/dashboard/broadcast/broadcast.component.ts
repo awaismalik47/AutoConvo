@@ -39,7 +39,9 @@ export class BroadcastComponent {
     this.loading.set(true);
     forkJoin({
       list: this.api.getBroadcasts().pipe(catchError(() => of([] as Broadcast[]))),
-      tpl: this.api.getTemplates().pipe(catchError(() => of([] as Template[]))),
+      tpl: this.api
+        .getTemplatesApproved()
+        .pipe(catchError(() => of([] as Template[]))),
     }).subscribe(({ list, tpl }) => {
       this.rows.set(list);
       this.templates.set(tpl);

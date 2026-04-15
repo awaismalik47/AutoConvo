@@ -55,15 +55,14 @@ export class InboxComponent {
 
   constructor() {
     forkJoin({
-      tpl: this.api.getTemplates().pipe(catchError(() => of([] as Template[]))),
+      tpl: this.api
+        .getTemplatesApproved()
+        .pipe(catchError(() => of([] as Template[]))),
       defaults: this.api
         .getMessageTemplateDefaults()
         .pipe(catchError(() => of([] as WhatsAppTemplatePreset[]))),
     }).subscribe(({ tpl, defaults }) => {
-      const approved = tpl.filter(
-        (t) => String(t.status).toLowerCase() === 'approved'
-      );
-      this.templates.set(approved);
+      this.templates.set(tpl);
       const presets =
         defaults.length > 0 ? defaults : FALLBACK_WHATSAPP_TEMPLATE_PRESETS;
       this.templatePresets.set(presets);

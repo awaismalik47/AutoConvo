@@ -115,6 +115,28 @@ export interface Template {
   createdAt: string;
 }
 
+/** Ready-made row from GET /templates/examples — prefills the create form. */
+export interface TemplateExample {
+  label: string;
+  suggestedName: string;
+  category: TemplateCategory;
+  language: string;
+  components: unknown[];
+}
+
+/** Body for POST /templates (CreateTemplateDto). */
+export interface CreateTemplatePayload {
+  name: string;
+  category: TemplateCategory;
+  language?: string;
+  components: unknown[];
+}
+
+export interface CreateTemplateResponse {
+  template: Template;
+  message: string;
+}
+
 // ── Messages / Inbox ────────────────────────────────────
 export interface Conversation {
   id?: string;

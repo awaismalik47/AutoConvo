@@ -15,11 +15,28 @@
         [disabled]="syncing() || loading()"
         (click)="syncFromWhatsApp()"
       >
-        {{ syncing() ? 'Syncing…' : 'Sync from WhatsApp' }}
+        {{ syncing() ? 'Refreshing…' : 'Refresh from Meta' }}
       </button>
       <button type="button" class="tpl__primary" (click)="openModal()">New template</button>
     </div>
   </div>
+
+  @if (examples().length > 0) {
+    <section class="tpl__examples" aria-label="Start from example">
+      <h3 class="tpl__examples-title">Start from example</h3>
+      <p class="tpl__examples-hint">
+        Pick a starter — we’ll open the create form with name, category, language, and components prefilled.
+      </p>
+      <div class="tpl__examples-grid">
+        @for (ex of examples(); track ex.suggestedName + ':' + ex.label) {
+          <button type="button" class="tpl__example-card" (click)="useExample(ex)">
+            <span class="tpl__example-label">{{ ex.label }}</span>
+            <span class="tpl__example-meta">{{ ex.category }} · {{ ex.language }}</span>
+          </button>
+        }
+      </div>
+    </section>
+  }
 
   @if (loading()) {
     <app-skeleton-table
@@ -64,7 +81,7 @@
                     [disabled]="syncing()"
                     (click)="syncFromWhatsApp()"
                   >
-                    {{ syncing() ? 'Syncing…' : 'Sync from WhatsApp' }}
+                    {{ syncing() ? 'Refreshing…' : 'Refresh from Meta' }}
                   </button>
                   <button type="button" class="tpl__primary tpl__primary--inline" (click)="openModal()">
                     New template

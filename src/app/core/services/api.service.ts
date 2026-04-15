@@ -14,6 +14,8 @@ import type {
   ContactsPage,
   Conversation,
   CreateBroadcastPayload,
+  CreateTemplatePayload,
+  CreateTemplateResponse,
   DashboardStats,
   Message,
   MetaConnectBody,
@@ -22,8 +24,37 @@ import type {
   SendTemplatePayload,
   SendTextPayload,
   Template,
+  TemplateExample,
   WhatsAppTemplatePreset,
 } from '../models';
+
+function normalizeTemplateExamples(raw: unknown): TemplateExample[] {
+  let rows: unknown[] = [];
+  if (Array.isArray(raw)) rows = raw;
+  else if (raw && typeof raw === 'object') {
+    const ex = (raw as Record<string, unknown>)['examples'];
+    if (Array.isArray(ex)) rows = ex;
+  }
+  const out: TemplateExample[] = [];
+  for (const item of rows) {
+    const o = (item ?? {}) as Record<string, unknown>;
+    const suggestedName = String(
+      o['suggestedName'] ?? o['suggested_name'] ?? ''
+    ).trim();
+    const cat = String(o['category'] ?? 'UTILITY').toUpperCase();
+    const category = (
+      ['MARKETING', 'UTILITY', 'AUTHENTICATION'].includes(cat)
+        ? cat
+        : 'UTILITY'
+    ) as TemplateExample['category'];
+    const language = String(o['language'] ?? 'en').trim() || 'en';
+    const label = String(o['label'] ?? suggestedName).trim();
+    const components = o['components'];
+    if (!suggestedName || !Array.isArray(components)) continue;
+    out.push({ label: label || suggestedName, suggestedName, category, language, components });
+  }
+  return out;
+}
 
 function normalizeWhatsAppTemplatePresets(raw: unknown): WhatsAppTemplatePreset[] {
   let rows: unknown[] = [];
@@ -257,12 +288,29 @@ export class ApiService {
     return this.http.get<Template[]>(`${this.base}/templates`);
   }
 
+  /** Meta-approved rows only — use for inbox send + broadcast dropdowns. */
+  getTemplatesApproved(): Observable<Template[]> {
+    return this.http.get<Template[]>(`${this.base}/templates/approved`);
+  }
+
+  /** Suggested templates aligned with POST /templates (richer than messages/defaults). */
+  getTemplateExamples(): Observable<TemplateExample[]> {
+    return this.http
+      .get<unknown>(`${this.base}/templates/examples`)
+      .pipe(map((raw) => normalizeTemplateExamples(raw)));
+  }
+
   getTemplate(id: string): Observable<Template> {
     return this.http.get<Template>(`${this.base}/templates/${id}`);
   }
 
-  createTemplate(data: Partial<Template>): Observable<Template> {
-    return this.http.post<Template>(`${this.base}/templates`, data);
+  createTemplate(
+    data: CreateTemplatePayload
+  ): Observable<CreateTemplateResponse> {
+    return this.http.post<CreateTemplateResponse>(
+      `${this.base}/templates`,
+      data
+    );
   }
 
   deleteTemplate(id: string): Observable<unknown> {
