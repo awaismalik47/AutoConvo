@@ -75,6 +75,8 @@ Production filenames **change every build** (content hashing). A 404 on `main-XX
 
 `index.html` uses `<base href="/">`, so scripts load from the site root; nested routes do not break JS paths when the SPA rewrite is correct.
 
+If the page stays on **“Loading AutoConvo…”** and never shows the login form, the **JavaScript bundles did not execute** — check DevTools → Network for **404** on `main-*.js` / `chunk-*.js` (fix deploy/cache as above), not only `index.html`.
+
 ## Running unit tests
 
 To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:

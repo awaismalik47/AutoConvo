@@ -8,6 +8,23 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-  <app-root></app-root>
+  <app-root>
+    <!-- Shown until Angular bootstraps; if JS fails to load (404, cache), you still see this instead of a blank screen -->
+    <noscript>AutoConvo needs JavaScript enabled. Please turn it on and reload.</noscript>
+    <div
+      class="ac-boot"
+      style="
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: system-ui, sans-serif;
+        background: #f7f8fa;
+        color: #6b7280;
+      "
+    >
+      <p style="margin: 0">Loading AutoConvo…</p>
+    </div>
+  </app-root>
 </body>
 </html>
