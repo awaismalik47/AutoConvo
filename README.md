@@ -65,6 +65,16 @@ Angular’s production build plus `npm install` usually **exceeds Render’s 512
 
 The workflow also copies **`404.html`** from `index.html` as a fallback where the host uses a custom 404 page.
 
+### Troubleshooting: `main-*.js` or `chunk-*.js` returns 404
+
+Production filenames **change every build** (content hashing). A 404 on `main-XXXX.js` almost always means the **HTML and JS are out of sync**:
+
+1. **Stale cache** — The browser (or a CDN) is still using an **old `index.html`** that references `main-ZHYDBTHU.js`, but the current deploy only has `main-<new-hash>.js`. **Fix:** hard refresh (Shift+Reload), clear site data for your Render URL, or try an incognito window.
+2. **Wrong Render settings** — Static site must use branch **`render-static`** (the branch GitHub Actions publishes), publish directory **`.`** (repo root of that branch), and **empty** build command. If Render still builds from **`main`** or the wrong folder, files will be missing or mismatched.
+3. **Deploy lag** — After pushing `main`, wait for the **Publish static site** workflow to finish and Render to redeploy from `render-static` before testing.
+
+`index.html` uses `<base href="/">`, so scripts load from the site root; nested routes do not break JS paths when the SPA rewrite is correct.
+
 ## Running unit tests
 
 To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
