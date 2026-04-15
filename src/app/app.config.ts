@@ -50,6 +50,25 @@ const metaOAuthRedirectInitializer = () => {
   const code = sp.get('code');
   if (!code) return;
   const state = sp.get('state');
+
+  // If this window was opened as a popup by FB.login() (Embedded Signup), Meta redirects
+  // the popup to our redirect URI with ?code= instead of calling the JS callback.
+  // Detect this case: send the code to the parent window and close the popup so the
+  // parent's whatsapp component can handle the connection without a page navigation.
+  const opener = window.opener as Window | null;
+  if (opener && opener !== window) {
+    try {
+      opener.postMessage(
+        { type: 'AC_POPUP_CODE', code, state: state ?? '' },
+        window.location.origin
+      );
+    } catch {
+      // opener on a different origin — fall through to normal redirect
+    }
+    window.close();
+    return;
+  }
+
   void router.navigate(['/whatsapp'], {
     queryParams: { code, state: state ?? undefined },
     replaceUrl: true,

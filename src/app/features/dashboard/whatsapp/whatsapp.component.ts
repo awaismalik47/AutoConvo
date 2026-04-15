@@ -58,6 +58,22 @@ export class WhatsappComponent {
     );
     this.destroyRef.onDestroy(() => stopEmbedded());
 
+    // Handle the case where the FB.login() popup redirected to our redirect URI
+    // instead of calling the JS callback. app.config.ts detects the popup and
+    // postMessages the code back here so we can connect without a page navigation.
+    const onPopupCode = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      const data = event.data as Record<string, unknown>;
+      if (data?.['type'] !== 'AC_POPUP_CODE') return;
+      const code = String(data['code'] ?? '').trim();
+      if (!code) return;
+      this.connectWithPayload({ code, redirectUri: getMetaOAuthRedirectUri() });
+    };
+    window.addEventListener('message', onPopupCode);
+    this.destroyRef.onDestroy(() =>
+      window.removeEventListener('message', onPopupCode)
+    );
+
     const qp = this.route.snapshot.queryParamMap;
     const metaOk = qp.get('meta_connected');
     const metaErr = qp.get('meta_error');
@@ -275,15 +291,24 @@ export class WhatsappComponent {
     this.loadFbSdk()
       .then(() => {
         const fb = (window as unknown as Record<string, unknown>)['FB'] as
-          | { login: (cb: () => void, opts: unknown) => void }
+          | { login: (cb: (res: { authResponse?: { code?: string } }) => void, opts: unknown) => void }
           | undefined;
         if (!fb) {
           this.startOAuthRedirect();
           return;
         }
         fb.login(
-          () => {
-            // Result handled via postMessage in WhatsappEmbeddedSignupService
+          (response: { authResponse?: { code?: string } }) => {
+            const code = response?.authResponse?.code;
+            if (code) {
+              // Code returned directly in the FB.login callback (e.g. returning user
+              // who already granted permissions). connectWithPayload guards against
+              // double-trigger if the WA_EMBEDDED_SIGNUP postMessage also fires.
+              this.connectWithPayload({
+                code,
+                redirectUri: getMetaOAuthRedirectUri(),
+              });
+            }
           },
           {
             config_id: configId,
