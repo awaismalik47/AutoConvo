@@ -46,4 +46,9 @@ export const environment = {
    */
   metaOAuthScopes:
     'whatsapp_business_management,business_management,whatsapp_business_messaging',
+  /**
+   * WhatsApp Embedded Signup configuration ID (Meta Developer → Embedded Signup → Configurations).
+   * When set, "Connect WhatsApp" launches the FB JS SDK popup instead of a full-page OAuth redirect.
+   */
+  metaEmbeddedSignupConfigId: '1325832982697087',
 };

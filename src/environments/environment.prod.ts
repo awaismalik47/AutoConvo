@@ -14,4 +14,5 @@ export const environment = {
   metaGraphVersion: 'v21.0',
   metaOAuthScopes:
     'whatsapp_business_management,business_management,whatsapp_business_messaging',
+  metaEmbeddedSignupConfigId: '1325832982697087',
 };

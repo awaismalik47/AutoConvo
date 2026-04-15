@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { environment } from '../../../../environments/environment';
 import type {
   MetaConnectBody,
   MetaConnectResponse,
@@ -255,8 +256,84 @@ export class WhatsappComponent {
     };
   }
 
-  /** Opens Meta OAuth; fetches `state` from API first, then Meta redirects with ?code=… */
+  /**
+   * Primary connect entry point.
+   * If a config ID is set, launches the FB JS SDK Embedded Signup popup.
+   * Falls back to a full-page OAuth redirect when the SDK is unavailable.
+   */
   startConnect(): void {
+    const configId = environment.metaEmbeddedSignupConfigId?.trim();
+    if (configId) {
+      this.launchEmbeddedSignup(configId);
+    } else {
+      this.startOAuthRedirect();
+    }
+  }
+
+  /** Loads the FB JS SDK (once) then opens the Embedded Signup popup with the given config. */
+  private launchEmbeddedSignup(configId: string): void {
+    this.loadFbSdk()
+      .then(() => {
+        const fb = (window as unknown as Record<string, unknown>)['FB'] as
+          | { login: (cb: () => void, opts: unknown) => void }
+          | undefined;
+        if (!fb) {
+          this.startOAuthRedirect();
+          return;
+        }
+        fb.login(
+          () => {
+            // Result handled via postMessage in WhatsappEmbeddedSignupService
+          },
+          {
+            config_id: configId,
+            response_type: 'code',
+            override_default_response_type: true,
+            extras: {
+              setup: {},
+              featureType: '',
+              sessionInfoVersion: '3',
+            },
+          }
+        );
+      })
+      .catch(() => this.startOAuthRedirect());
+  }
+
+  /**
+   * Lazily loads the Facebook JS SDK and initializes it with this app's ID.
+   * Resolves immediately if the SDK is already present on the page.
+   * Caches the in-flight Promise so concurrent calls share one load.
+   */
+  private fbSdkReady: Promise<void> | null = null;
+
+  private loadFbSdk(): Promise<void> {
+    const w = window as unknown as Record<string, unknown>;
+    if (w['FB']) return Promise.resolve();
+    if (this.fbSdkReady) return this.fbSdkReady;
+
+    this.fbSdkReady = new Promise<void>((resolve) => {
+      w['fbAsyncInit'] = () => {
+        ((window as unknown as Record<string, unknown>)['FB'] as { init: (opts: object) => void }).init({
+          appId: environment.metaAppId,
+          autoLogAppEvents: true,
+          xfbml: false,
+          version: environment.metaGraphVersion,
+        });
+        resolve();
+      };
+      const script = document.createElement('script');
+      script.src = 'https://connect.facebook.net/en_US/sdk.js';
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    });
+
+    return this.fbSdkReady;
+  }
+
+  /** Full-page OAuth redirect fallback (original flow). */
+  private startOAuthRedirect(): void {
     this.api.getMetaOAuthState().subscribe({
       next: ({ state }) => {
         const url = buildMetaOAuthAuthorizeUrl({ state });
