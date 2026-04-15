@@ -22,7 +22,11 @@ import {
 } from '../../../core/utils/meta-oauth';
 import { getApiErrorMessage } from '../../../core/utils/api-error';
 import type { EmbeddedSignupDispatch } from '../../../core/services/whatsapp-embedded-signup.service';
-import { WhatsappEmbeddedSignupService } from '../../../core/services/whatsapp-embedded-signup.service';
+import {
+  FB_SDK_REDIRECT_URI,
+  META_COEXISTENCE_EMBEDDED_SIGNUP_HINT,
+  WhatsappEmbeddedSignupService,
+} from '../../../core/services/whatsapp-embedded-signup.service';
 
 /** Meta docs — coexistence / Embedded Signup (verify periodically). */
 export const META_WHATSAPP_COEXISTENCE_HELP_URL =
@@ -67,6 +71,8 @@ export class WhatsappComponent {
       if (data?.['type'] !== 'AC_POPUP_CODE') return;
       const code = String(data['code'] ?? '').trim();
       if (!code) return;
+      // The popup was redirected to the app's own URL (frontend root), so Meta
+      // issued the code against getMetaOAuthRedirectUri() — use that for exchange.
       this.connectWithPayload({ code, redirectUri: getMetaOAuthRedirectUri() });
     };
     window.addEventListener('message', onPopupCode);
@@ -135,16 +141,17 @@ export class WhatsappComponent {
         return;
       case 'finish':
         // Backend rejects connectionMode: 'standard' — omit; optional wabaId when Meta sends it.
+        // FB.login() uses login_success.html as its internal redirect_uri — must match on exchange.
         this.connectWithPayload({
           code: evt.code,
-          redirectUri: getMetaOAuthRedirectUri(),
+          redirectUri: FB_SDK_REDIRECT_URI,
           ...(evt.wabaId ? { wabaId: evt.wabaId } : {}),
         });
         return;
       case 'finish_coexistence':
         this.connectWithPayload({
           code: evt.code,
-          redirectUri: getMetaOAuthRedirectUri(),
+          redirectUri: FB_SDK_REDIRECT_URI,
           connectionMode: 'coexistence',
           ...(evt.wabaId ? { wabaId: evt.wabaId } : {}),
         });
@@ -306,7 +313,7 @@ export class WhatsappComponent {
               // double-trigger if the WA_EMBEDDED_SIGNUP postMessage also fires.
               this.connectWithPayload({
                 code,
-                redirectUri: getMetaOAuthRedirectUri(),
+                redirectUri: FB_SDK_REDIRECT_URI,
               });
             }
           },
@@ -314,11 +321,7 @@ export class WhatsappComponent {
             config_id: configId,
             response_type: 'code',
             override_default_response_type: true,
-            extras: {
-              setup: {},
-              featureType: '',
-              sessionInfoVersion: '3',
-            },
+            extras: META_COEXISTENCE_EMBEDDED_SIGNUP_HINT,
           }
         );
       })

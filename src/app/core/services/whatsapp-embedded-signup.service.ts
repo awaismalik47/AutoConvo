@@ -14,6 +14,15 @@ export const META_COEXISTENCE_EMBEDDED_SIGNUP_HINT = {
   sessionInfoVersion: '3',
 } as const;
 
+/**
+ * When using FB.login() for Embedded Signup, the FB SDK opens the OAuth dialog with
+ * `redirect_uri=https://www.facebook.com/connect/login_success.html` internally.
+ * Meta issues the authorization code against that URI, so the backend must use the
+ * same value when exchanging the code — NOT the app's own frontend URL.
+ */
+export const FB_SDK_REDIRECT_URI =
+  'https://www.facebook.com/connect/login_success.html';
+
 /** Origins Meta may use for Embedded Signup postMessage — verify against current Meta docs. */
 export const META_EMBEDDED_SIGNUP_ORIGINS = [
   'https://www.facebook.com',
