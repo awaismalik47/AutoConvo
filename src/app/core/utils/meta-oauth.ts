@@ -43,9 +43,12 @@ export function validateMetaOAuthState(returned: string | null): boolean {
 }
 
 /**
- * Exact `redirect_uri` used in the OAuth dialog and **must** be sent again unchanged when
- * exchanging `code` for an access token (`POST /meta/connect` on your API). Any mismatch
- * causes Meta’s “redirect_uri is identical to the one you used in the OAuth dialog” error.
+ * Exact `redirect_uri` for **Pattern B** (code returns to this SPA): site root `{frontendUrl}/`.
+ * Must match Meta “Valid OAuth redirect URIs” and the `redirectUri` sent to `POST /meta/connect`.
+ *
+ * **Pattern A** (server callback): Meta redirects to `META_OAUTH_REDIRECT_URI` on the API
+ * (e.g. `…/api/v1/meta/oauth/callback`); the user then lands on the SPA with `?meta_connected=1`
+ * or `?meta_error=…` — no client-side `code` exchange.
  */
 export function getMetaOAuthRedirectUri(): string {
   const base = environment.frontendUrl.replace(/\/$/, '');

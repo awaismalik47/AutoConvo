@@ -6,6 +6,7 @@ import { ApiService } from '../../../core/services/api.service';
 import { ToastService } from '../../../core/services/toast.service';
 import type {
   MetaConnectBody,
+  MetaConnectResponse,
   MetaIntegration,
   MetaPhoneInfo,
   MetaStatus,
@@ -56,8 +57,35 @@ export class WhatsappComponent {
     );
     this.destroyRef.onDestroy(() => stopEmbedded());
 
-    const code = this.route.snapshot.queryParamMap.get('code');
-    const state = this.route.snapshot.queryParamMap.get('state');
+    const qp = this.route.snapshot.queryParamMap;
+    const metaOk = qp.get('meta_connected');
+    const metaErr = qp.get('meta_error');
+
+    if (metaOk === '1' || metaOk === 'true') {
+      void this.router.navigate(['/whatsapp'], {
+        replaceUrl: true,
+        queryParams: {},
+      });
+      this.loading.set(false);
+      this.toast.success('WhatsApp connected');
+      this.refresh();
+      return;
+    }
+    if (metaErr != null && metaErr.length > 0) {
+      void this.router.navigate(['/whatsapp'], {
+        replaceUrl: true,
+        queryParams: {},
+      });
+      this.loading.set(false);
+      this.toast.error(
+        decodeURIComponent(metaErr.replace(/\+/g, ' '))
+      );
+      this.refresh();
+      return;
+    }
+
+    const code = qp.get('code');
+    const state = qp.get('state');
 
     if (code) {
       if (!validateMetaOAuthState(state)) {
@@ -120,6 +148,44 @@ export class WhatsappComponent {
     });
   }
 
+  /**
+   * GET /meta/status: `coexistence.syncDeadlineAt` etc. are nested under `coexistence` (camelCase).
+   * Falls back to top-level fields if the nested object is absent (older responses).
+   */
+  private readCoexistenceSyncFields(
+    st: MetaStatus | null
+  ): Pick<
+    WAConnection,
+    'syncDeadlineAt' | 'contactsSyncAt' | 'historySyncAt'
+  > {
+    if (!st) return {};
+    const r = st as Record<string, unknown>;
+    const cx = r['coexistence'];
+    const block =
+      cx && typeof cx === 'object' && !Array.isArray(cx)
+        ? (cx as Record<string, unknown>)
+        : null;
+    const pick = (obj: Record<string, unknown>, keys: string[]): string | undefined => {
+      for (const k of keys) {
+        const v = obj[k];
+        if (typeof v === 'string' && v.trim()) return v;
+      }
+      return undefined;
+    };
+    if (block) {
+      return {
+        syncDeadlineAt: pick(block, ['syncDeadlineAt']),
+        contactsSyncAt: pick(block, ['contactsSyncAt']),
+        historySyncAt: pick(block, ['historySyncAt']),
+      };
+    }
+    return {
+      syncDeadlineAt: pick(r, ['syncDeadlineAt', 'sync_deadline_at']),
+      contactsSyncAt: pick(r, ['contactsSyncAt', 'contacts_sync_at']),
+      historySyncAt: pick(r, ['historySyncAt', 'history_sync_at']),
+    };
+  }
+
   private mapConnection(
     st: MetaStatus | null,
     ph: MetaPhoneInfo | null
@@ -133,6 +199,7 @@ export class WhatsappComponent {
     const mode = st?.connectionMode as WhatsappConnectionMode | undefined;
     const policy =
       typeof integ?.policy === 'string' ? integ.policy : undefined;
+    const sync = this.readCoexistenceSyncFields(st);
     const base: WAConnection = {
       status: 'connected',
       connectionMode: mode,
@@ -140,22 +207,51 @@ export class WhatsappComponent {
       integrationSummary:
         typeof integ?.summary === 'string' ? integ.summary : undefined,
       integrationPolicy: policy,
+      ...sync,
+    };
+
+    const platformRaw = ph?.platformType ?? ph?.platform_type;
+    const platformType =
+      typeof platformRaw === 'string' && platformRaw.trim()
+        ? platformRaw.trim()
+        : undefined;
+    const isOnBizApp =
+      ph?.isOnBizApp === true || ph?.is_on_biz_app === true;
+
+    const stWaba =
+      st?.wabaId != null && String(st.wabaId).trim()
+        ? String(st.wabaId).trim()
+        : undefined;
+
+    const wabaFromPhone = (
+      wabaId?: string,
+      waba_id?: string
+    ): string | undefined => {
+      const v = wabaId ?? waba_id;
+      return v != null && String(v).trim() ? String(v).trim() : undefined;
     };
 
     if (ph) {
       return {
         ...base,
         displayName: String(ph.displayName ?? ph.display_name ?? ''),
-        displayNumber: String(ph.displayNumber ?? ph.display_number ?? ''),
+        displayNumber: String(
+          ph.displayNumber ?? ph.display_number ?? st?.phoneNumber ?? ''
+        ),
         phoneNumberId: String(ph.phoneNumberId ?? ph.phone_number_id ?? ''),
-        wabaId: String(ph.wabaId ?? ph.waba_id ?? ''),
+        wabaId: wabaFromPhone(ph.wabaId, ph.waba_id) ?? stWaba,
+        isOnBizApp,
+        platformType,
       };
     }
 
     return {
       ...base,
       displayName: String(st?.displayName ?? st?.display_name ?? ''),
-      displayNumber: String(st?.displayNumber ?? st?.display_number ?? ''),
+      displayNumber: String(
+        st?.phoneNumber ?? st?.displayNumber ?? st?.display_number ?? ''
+      ),
+      wabaId: stWaba,
     };
   }
 
@@ -201,6 +297,31 @@ export class WhatsappComponent {
     );
   }
 
+  private applyCoexistenceSyncWarnings(res: MetaConnectResponse): void {
+    const cs = res.coexistenceSync;
+    if (!cs) return;
+    const lines: string[] = [];
+    if (cs.contacts?.ok === false) {
+      lines.push(
+        `Contacts sync did not finish${
+          cs.contacts.error ? `: ${cs.contacts.error}` : ''
+        }`
+      );
+    }
+    if (cs.history?.ok === false) {
+      lines.push(
+        `History sync did not finish${
+          cs.history.error ? `: ${cs.history.error}` : ''
+        }`
+      );
+    }
+    if (lines.length) {
+      this.toast.warning(
+        'Connected, but some coexistence steps failed. ' + lines.join(' ')
+      );
+    }
+  }
+
   private connectWithPayload(body: MetaConnectBody, clearInput = false): void {
     if (this.submitting()) return;
     this.submitting.set(true);
@@ -214,11 +335,15 @@ export class WhatsappComponent {
         finalize(() => this.submitting.set(false))
       )
       .subscribe((res) => {
-        if (res != null) {
-          this.toast.success('WhatsApp connected');
-          if (clearInput) this.codeInput.set('');
-          this.refresh();
-        }
+        if (res == null) return;
+        const msg =
+          typeof res.message === 'string' && res.message.trim()
+            ? res.message.trim()
+            : 'WhatsApp connected';
+        this.toast.success(msg);
+        this.applyCoexistenceSyncWarnings(res);
+        if (clearInput) this.codeInput.set('');
+        this.refresh();
       });
   }
 

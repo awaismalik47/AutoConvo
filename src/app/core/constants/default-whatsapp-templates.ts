@@ -8,16 +8,16 @@ export const FALLBACK_WHATSAPP_TEMPLATE_PRESETS: WhatsAppTemplatePreset[] = [
   {
     label: 'Order confirmation',
     templateName: 'order_confirmation',
-    languageCode: 'en',
+    languageCode: 'en_US',
   },
   {
     label: 'Product restock',
     templateName: 'product_restock_notify',
-    languageCode: 'en',
+    languageCode: 'en_US',
   },
   {
     label: 'Shipping update',
     templateName: 'shipping_update',
-    languageCode: 'en',
+    languageCode: 'en_US',
   },
 ];

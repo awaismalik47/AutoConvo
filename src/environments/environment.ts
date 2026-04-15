@@ -1,13 +1,17 @@
 /**
  * Single source of truth for integration (align with backend `.env`):
- * - `apiUrl` — API root (…/api/v1). Same idea as API_URL in docs.
- * - `frontendUrl` — must match backend FRONTEND_URL (scheme + host + port) for CORS + Stripe return URLs.
+ * - `apiUrl` — Nest API root (…/api/v1). HttpClient uses this (or same-origin `/api/v1` in dev via `httpApiRoot()`).
+ * - `frontendUrl` — must match backend FRONTEND_URL so CORS allows the browser; also Stripe/Meta return URLs.
  *
- * Local dev: use `httpApiRoot()` from `http-api-root.ts` — it returns `/api/v1` so the browser stays same-origin
- * and `ng serve` proxies `/api` → `BASE` (see `proxy.conf.json`). Update the proxy target when ngrok changes.
+ * Auth: `Authorization: Bearer <jwt>` is added by `auth.interceptor.ts` for protected routes.
  *
- * Meta OAuth requires **https** callback URLs. Use `npm run start:https`, open `https://localhost:4200`, and register
- * `https://localhost:4200/whatsapp` in Meta. Alternatively set `frontendUrl` to an **https** ngrok URL for the UI.
+ * Local dev: `httpApiRoot()` returns `/api/v1` + `proxy.conf.json` → your API (e.g. ngrok). Update proxy when BASE changes.
+ *
+ * Meta OAuth: use **https** callback URLs (`npm run start:https` or ngrok). Register the exact `redirect_uri`:
+ * - Pattern B (this SPA): `{frontendUrl}/` — see `getMetaOAuthRedirectUri()` and Meta “Valid OAuth redirect URIs”.
+ * - Pattern A (server): `META_OAUTH_REDIRECT_URI` on the API; SPA handles `/?meta_connected=1` or `?meta_error=…`.
+ *
+ * CORS: the API must allow this origin explicitly (backend may use a fixed allowlist — add new deploy hosts there).
  */
 const BASE = 'https://intromissive-unspontaneously-deanna.ngrok-free.dev';
 

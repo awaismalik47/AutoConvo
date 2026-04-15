@@ -1,5 +1,19 @@
 import { Injectable } from '@angular/core';
 
+/**
+ * Embedded Signup extras for **coexistence** (onboarding WhatsApp Business app users).
+ * Matches Meta’s “Customize Embedded Signup” snippet — merge into `extras` when launching FB.login:
+ * @see https://developers.facebook.com/documentation/business-messaging/whatsapp/embedded-signup/onboarding-business-app-users/
+ *
+ * This app’s default “Connect WhatsApp” path uses full-page OAuth (`dialog/oauth`); use this object
+ * when you switch to the JS SDK Embedded Signup launch + callback registration.
+ */
+export const META_COEXISTENCE_EMBEDDED_SIGNUP_HINT = {
+  setup: {},
+  featureType: 'whatsapp_business_app_onboarding',
+  sessionInfoVersion: '3',
+} as const;
+
 /** Origins Meta may use for Embedded Signup postMessage — verify against current Meta docs. */
 export const META_EMBEDDED_SIGNUP_ORIGINS = [
   'https://www.facebook.com',

@@ -29,18 +29,38 @@ export interface MetaIntegration {
   summary?: string;
   /** e.g. `coexistence_only` — align UI copy with backend policy */
   policy?: string;
+  outbound?: unknown;
+  inbound?: unknown;
+  sharedBusinessNumberModel?: unknown;
   [key: string]: unknown;
+}
+
+/** Nested under GET /meta/status `coexistence` (camelCase) — SMB sync windows. */
+export interface MetaCoexistenceSyncInfo {
+  syncDeadlineAt?: string | null;
+  contactsSyncAt?: string | null;
+  historySyncAt?: string | null;
 }
 
 export interface MetaStatus {
   connected?: boolean;
   status?: string;
   connectionMode?: WhatsappConnectionMode;
+  phoneNumber?: string;
+  wabaId?: string;
   displayNumber?: string;
   displayName?: string;
   display_number?: string;
   display_name?: string;
   integration?: MetaIntegration;
+  /**
+   * Coexistence sync dates (nested object per AutoConvo — not the same as `integration.coexistence` boolean).
+   */
+  coexistence?: MetaCoexistenceSyncInfo;
+  /** Legacy/alternate shape — prefer nested `coexistence` when present. */
+  syncDeadlineAt?: string;
+  contactsSyncAt?: string;
+  historySyncAt?: string;
   [key: string]: unknown;
 }
 
@@ -53,6 +73,11 @@ export interface MetaPhoneInfo {
   display_name?: string;
   phone_number_id?: string;
   waba_id?: string;
+  /** True when the number is active on WhatsApp Business app (coexistence diagnostics). */
+  is_on_biz_app?: boolean;
+  isOnBizApp?: boolean;
+  platform_type?: string;
+  platformType?: string;
   [key: string]: unknown;
 }
 
@@ -67,6 +92,11 @@ export interface WAConnection {
   coexistence?: boolean;
   integrationSummary?: string;
   integrationPolicy?: string;
+  syncDeadlineAt?: string;
+  contactsSyncAt?: string;
+  historySyncAt?: string;
+  isOnBizApp?: boolean;
+  platformType?: string;
 }
 
 /**
@@ -78,6 +108,25 @@ export interface MetaConnectBody {
   redirectUri: string;
   connectionMode?: 'coexistence';
   wabaId?: string;
+}
+
+export interface CoexistenceSyncStepResult {
+  ok: boolean;
+  requestId?: string;
+  error?: string;
+}
+
+/** POST /meta/connect 200 — may include partial SMB sync failures while connect succeeds. */
+export interface MetaConnectResponse {
+  message?: string;
+  phoneNumber?: string;
+  verifiedName?: string;
+  wabaId?: string;
+  connectionMode?: WhatsappConnectionMode;
+  coexistenceSync?: {
+    contacts?: CoexistenceSyncStepResult;
+    history?: CoexistenceSyncStepResult;
+  };
 }
 
 // ── Contacts ────────────────────────────────────────────

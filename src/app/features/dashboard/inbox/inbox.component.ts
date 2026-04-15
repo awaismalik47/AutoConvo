@@ -5,6 +5,7 @@ import { ApiService } from '../../../core/services/api.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { FALLBACK_WHATSAPP_TEMPLATE_PRESETS } from '../../../core/constants/default-whatsapp-templates';
 import { getApiErrorMessage } from '../../../core/utils/api-error';
+import { normalizeMetaTemplateLocale } from '../../../core/utils/meta-locale';
 import type {
   Conversation,
   Message,
@@ -47,7 +48,7 @@ export class InboxComponent {
   readonly newMessageMode = signal(false);
   readonly newPhone = signal('');
   readonly templateName = signal('');
-  readonly templateLang = signal('en');
+  readonly templateLang = signal('en_US');
   /** Optional JSON array for template components; empty → []. */
   readonly templateComponentsJson = signal('');
   readonly sendingTemplate = signal(false);
@@ -118,13 +119,17 @@ export class InboxComponent {
     const t = this.templates().find((x) => x.id === id);
     if (t) {
       this.templateName.set(t.name);
-      this.templateLang.set(t.language || 'en');
+      this.templateLang.set(
+        normalizeMetaTemplateLocale(t.language || 'en_US')
+      );
     }
   }
 
   applyPreset(p: WhatsAppTemplatePreset): void {
     this.templateName.set(p.templateName);
-    this.templateLang.set(p.languageCode || 'en');
+    this.templateLang.set(
+      normalizeMetaTemplateLocale(p.languageCode || 'en_US')
+    );
   }
 
   sendTemplateFirst(): void {
@@ -152,7 +157,9 @@ export class InboxComponent {
       .sendTemplateMessage({
         to: rawTo,
         templateName: name,
-        languageCode: this.templateLang().trim() || 'en',
+        languageCode: normalizeMetaTemplateLocale(
+          this.templateLang().trim() || 'en_US'
+        ),
         components,
       })
       .pipe(

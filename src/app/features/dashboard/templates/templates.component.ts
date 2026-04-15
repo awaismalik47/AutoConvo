@@ -14,6 +14,7 @@ import type {
   TemplateExample,
 } from '../../../core/models';
 import { getApiErrorMessage } from '../../../core/utils/api-error';
+import { normalizeMetaTemplateLocale } from '../../../core/utils/meta-locale';
 import { TruncatePipe } from '../../../shared/pipes/pipes';
 import { SkeletonTableComponent } from '../../../shared/components/skeleton/skeleton-table.component';
 
@@ -49,7 +50,7 @@ export class TemplatesComponent {
   readonly form = this.fb.nonNullable.group({
     name: ['', Validators.required],
     category: ['UTILITY' as TemplateCategory, Validators.required],
-    language: ['en', Validators.required],
+    language: ['en_US', Validators.required],
     body: ['', [Validators.required, Validators.minLength(3)]],
   });
 
@@ -76,7 +77,7 @@ export class TemplatesComponent {
     this.form.reset({
       name: '',
       category: 'UTILITY',
-      language: 'en',
+      language: 'en_US',
       body: '',
     });
     this.modalOpen.set(true);
@@ -90,7 +91,7 @@ export class TemplatesComponent {
     this.form.reset({
       name: ex.suggestedName,
       category: ex.category,
-      language: ex.language,
+      language: normalizeMetaTemplateLocale(ex.language),
       body: this.extractBodyFromComponents(ex.components),
     });
     this.modalOpen.set(true);
@@ -175,7 +176,7 @@ export class TemplatesComponent {
       .createTemplate({
         name: v.name.trim(),
         category: v.category,
-        language: v.language.trim() || undefined,
+        language: normalizeMetaTemplateLocale(v.language),
         components,
       })
       .pipe(

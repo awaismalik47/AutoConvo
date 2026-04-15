@@ -43,6 +43,40 @@
             >
           </div>
         }
+        @if (c.syncDeadlineAt || c.contactsSyncAt || c.historySyncAt) {
+          <div class="wa__sync-hint">
+            @if (c.syncDeadlineAt) {
+              <div class="card__row">
+                <span class="card__label">Sync deadline</span>
+                <span class="card__val">{{ c.syncDeadlineAt }}</span>
+              </div>
+            }
+            @if (c.contactsSyncAt) {
+              <div class="card__row">
+                <span class="card__label">Contacts sync</span>
+                <span class="card__val">{{ c.contactsSyncAt }}</span>
+              </div>
+            }
+            @if (c.historySyncAt) {
+              <div class="card__row">
+                <span class="card__label">History sync</span>
+                <span class="card__val">{{ c.historySyncAt }}</span>
+              </div>
+            }
+          </div>
+        }
+        @if (c.isOnBizApp === true || c.isOnBizApp === false) {
+          <div class="card__row">
+            <span class="card__label">WhatsApp Business app</span>
+            <span class="card__val">{{ c.isOnBizApp ? 'Active on device' : 'Not detected' }}</span>
+          </div>
+        }
+        @if (c.platformType) {
+          <div class="card__row">
+            <span class="card__label">Platform</span>
+            <span class="card__val">{{ c.platformType }}</span>
+          </div>
+        }
         <div class="card__row">
           <span class="card__label">Display</span>
           <span class="card__val">{{ c.displayName }}</span>

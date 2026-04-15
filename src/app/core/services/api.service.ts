@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { httpApiRoot } from '../../../environments/http-api-root';
+import { normalizeMetaTemplateLocale } from '../utils/meta-locale';
 import type {
   AuthUser,
   BillingCheckoutPayload,
@@ -19,6 +20,7 @@ import type {
   DashboardStats,
   Message,
   MetaConnectBody,
+  MetaConnectResponse,
   MetaPhoneInfo,
   MetaStatus,
   SendTemplatePayload,
@@ -47,7 +49,9 @@ function normalizeTemplateExamples(raw: unknown): TemplateExample[] {
         ? cat
         : 'UTILITY'
     ) as TemplateExample['category'];
-    const language = String(o['language'] ?? 'en').trim() || 'en';
+    const language = normalizeMetaTemplateLocale(
+      String(o['language'] ?? 'en_US').trim() || 'en_US'
+    );
     const label = String(o['label'] ?? suggestedName).trim();
     const components = o['components'];
     if (!suggestedName || !Array.isArray(components)) continue;
@@ -74,13 +78,15 @@ function normalizeWhatsAppTemplatePresets(raw: unknown): WhatsAppTemplatePreset[
     const label = String(
       r['label'] ?? r['title'] ?? templateName
     ).trim();
-    const languageCode = String(
-      r['languageCode'] ?? r['language_code'] ?? r['language'] ?? 'en'
-    ).trim();
+    const languageCode = normalizeMetaTemplateLocale(
+      String(
+        r['languageCode'] ?? r['language_code'] ?? r['language'] ?? 'en_US'
+      ).trim() || 'en_US'
+    );
     out.push({
       label: label || templateName,
       templateName,
-      languageCode: languageCode || 'en',
+      languageCode,
     });
   }
   return out;
@@ -231,8 +237,11 @@ export class ApiService {
   }
 
   /** Omit `connectionMode` or send `coexistence` only — never `standard` (API validation). */
-  metaConnect(body: MetaConnectBody): Observable<unknown> {
-    return this.http.post(`${this.base}/meta/connect`, body);
+  metaConnect(body: MetaConnectBody): Observable<MetaConnectResponse> {
+    return this.http.post<MetaConnectResponse>(
+      `${this.base}/meta/connect`,
+      body
+    );
   }
 
   metaDisconnect(): Observable<unknown> {
