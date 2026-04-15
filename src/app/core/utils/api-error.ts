@@ -13,6 +13,15 @@ export function getApiErrorMessage(
       const o = body as Record<string, unknown>;
       const msg = o['message'];
       if (typeof msg === 'string' && msg.trim()) return msg;
+      if (Array.isArray(msg) && msg.length) {
+        const joined = msg
+          .map((m) => (typeof m === 'string' ? m : String(m)))
+          .filter(Boolean)
+          .join('. ');
+        if (joined) return joined;
+      }
+      const details = o['details'];
+      if (typeof details === 'string' && details.trim()) return details;
       const nested = o['error'];
       if (nested && typeof nested === 'object') {
         const m = (nested as Record<string, unknown>)['message'];

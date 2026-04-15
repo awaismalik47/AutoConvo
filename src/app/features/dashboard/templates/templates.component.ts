@@ -13,6 +13,7 @@ import type {
   TemplateCategory,
   TemplateExample,
 } from '../../../core/models';
+import { getApiErrorMessage } from '../../../core/utils/api-error';
 import { TruncatePipe } from '../../../shared/pipes/pipes';
 import { SkeletonTableComponent } from '../../../shared/components/skeleton/skeleton-table.component';
 
@@ -179,7 +180,9 @@ export class TemplatesComponent {
       })
       .pipe(
         catchError((err) => {
-          this.toast.error(err?.error?.message || 'Could not create');
+          this.toast.error(
+            getApiErrorMessage(err, 'Could not create template')
+          );
           return of(null);
         }),
         finalize(() => this.saving.set(false))
