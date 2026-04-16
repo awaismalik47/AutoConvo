@@ -23,6 +23,7 @@ import {
 import { getApiErrorMessage } from '../../../core/utils/api-error';
 import type { EmbeddedSignupDispatch } from '../../../core/services/whatsapp-embedded-signup.service';
 import {
+  FB_SDK_REDIRECT_URI,
   META_COEXISTENCE_EMBEDDED_SIGNUP_HINT,
   WhatsappEmbeddedSignupService,
 } from '../../../core/services/whatsapp-embedded-signup.service';
@@ -56,6 +57,11 @@ export class WhatsappComponent {
   readonly coexistenceHelpUrl = META_WHATSAPP_COEXISTENCE_HELP_URL;
 
   constructor() {
+    // TODO: remove — temporary debug listener to capture all postMessages during flow
+    const debugMsg = (e: MessageEvent) => console.log('[MSG]', e.origin, e.data);
+    window.addEventListener('message', debugMsg);
+    this.destroyRef.onDestroy(() => window.removeEventListener('message', debugMsg));
+
     const stopEmbedded = this.embeddedSignup.subscribe((evt) =>
       this.onEmbeddedSignup(evt)
     );
@@ -294,17 +300,20 @@ export class WhatsappComponent {
     this.loadFbSdk()
       .then(() => {
         const fb = (window as unknown as Record<string, unknown>)['FB'] as
-          | { login: (cb: () => void, opts: unknown) => void }
+          | { login: (cb: (res: { authResponse?: { code?: string } }) => void, opts: unknown) => void }
           | undefined;
         if (!fb) {
           this.startOAuthRedirect();
           return;
         }
         fb.login(
-          () => {
-            // Intentionally empty — rely on WA_EMBEDDED_SIGNUP postMessage (onEmbeddedSignup).
-            // The authResponse.code path requires facebook.com as redirect_uri which cannot
-            // be whitelisted; the postMessage handler does not need a redirect_uri.
+          (response: { authResponse?: { code?: string } }) => {
+            const code = response?.authResponse?.code;
+            if (code) {
+              // Code via FB.login() callback — issued against login_success.html internally.
+              // Backend must exchange using FB_SDK_REDIRECT_URI as redirect_uri.
+              this.connectWithPayload({ code, redirectUri: FB_SDK_REDIRECT_URI });
+            }
           },
           {
             config_id: configId,
