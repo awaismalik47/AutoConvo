@@ -105,7 +105,7 @@ export interface WAConnection {
  */
 export interface MetaConnectBody {
   code: string;
-  redirectUri: string;
+  redirectUri?: string;
   connectionMode?: 'coexistence';
   wabaId?: string;
 }

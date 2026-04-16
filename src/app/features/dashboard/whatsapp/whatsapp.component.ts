@@ -23,7 +23,6 @@ import {
 import { getApiErrorMessage } from '../../../core/utils/api-error';
 import type { EmbeddedSignupDispatch } from '../../../core/services/whatsapp-embedded-signup.service';
 import {
-  FB_SDK_REDIRECT_URI,
   META_COEXISTENCE_EMBEDDED_SIGNUP_HINT,
   WhatsappEmbeddedSignupService,
 } from '../../../core/services/whatsapp-embedded-signup.service';
@@ -141,17 +140,14 @@ export class WhatsappComponent {
         return;
       case 'finish':
         // Backend rejects connectionMode: 'standard' — omit; optional wabaId when Meta sends it.
-        // FB.login() uses login_success.html as its internal redirect_uri — must match on exchange.
         this.connectWithPayload({
           code: evt.code,
-          redirectUri: FB_SDK_REDIRECT_URI,
           ...(evt.wabaId ? { wabaId: evt.wabaId } : {}),
         });
         return;
       case 'finish_coexistence':
         this.connectWithPayload({
           code: evt.code,
-          redirectUri: FB_SDK_REDIRECT_URI,
           connectionMode: 'coexistence',
           ...(evt.wabaId ? { wabaId: evt.wabaId } : {}),
         });
@@ -311,10 +307,7 @@ export class WhatsappComponent {
               // Code returned directly in the FB.login callback (e.g. returning user
               // who already granted permissions). connectWithPayload guards against
               // double-trigger if the WA_EMBEDDED_SIGNUP postMessage also fires.
-              this.connectWithPayload({
-                code,
-                redirectUri: FB_SDK_REDIRECT_URI,
-              });
+              this.connectWithPayload({ code });
             }
           },
           {
