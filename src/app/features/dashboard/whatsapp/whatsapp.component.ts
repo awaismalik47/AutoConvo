@@ -294,21 +294,17 @@ export class WhatsappComponent {
     this.loadFbSdk()
       .then(() => {
         const fb = (window as unknown as Record<string, unknown>)['FB'] as
-          | { login: (cb: (res: { authResponse?: { code?: string } }) => void, opts: unknown) => void }
+          | { login: (cb: () => void, opts: unknown) => void }
           | undefined;
         if (!fb) {
           this.startOAuthRedirect();
           return;
         }
         fb.login(
-          (response: { authResponse?: { code?: string } }) => {
-            const code = response?.authResponse?.code;
-            if (code) {
-              // Code returned directly in the FB.login callback (e.g. returning user
-              // who already granted permissions). connectWithPayload guards against
-              // double-trigger if the WA_EMBEDDED_SIGNUP postMessage also fires.
-              this.connectWithPayload({ code });
-            }
+          () => {
+            // Intentionally empty — rely on WA_EMBEDDED_SIGNUP postMessage (onEmbeddedSignup).
+            // The authResponse.code path requires facebook.com as redirect_uri which cannot
+            // be whitelisted; the postMessage handler does not need a redirect_uri.
           },
           {
             config_id: configId,
