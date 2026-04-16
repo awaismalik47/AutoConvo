@@ -1,0 +1,1 @@
+import"./chunk-2NFLSA4Y.js";var n=[{path:"",loadComponent:()=>import("./chunk-KTYMW7LS.js").then(o=>o.BillingPageComponent)},{path:"success",loadComponent:()=>import("./chunk-KEQUVUNA.js").then(o=>o.BillingSuccessComponent)},{path:"cancel",loadComponent:()=>import("./chunk-UWAR3YCG.js").then(o=>o.BillingCancelComponent)}];export{n as billingRoutes};
